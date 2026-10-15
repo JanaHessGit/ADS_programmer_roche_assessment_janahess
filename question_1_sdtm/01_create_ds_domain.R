@@ -31,7 +31,6 @@
 #               Tests (after running the program):
 #                 testthat::test_dir("question_1_sdtm/tests/testthat")
 #
-# R packages  : sdtm.oak, pharmaverseraw, pharmaversesdtm, dplyr, stringr
 # =============================================================================
 
 library(sdtm.oak)
@@ -53,7 +52,6 @@ ds_raw <- pharmaverseraw::ds_raw
 dm     <- pharmaversesdtm::dm
 
 # Study controlled terminology (same file as in pharmaverse/examples).
-# read_ct_spec() also checks that the file has the required CT columns.
 study_ct <- read.csv(file.path(prog_dir, "metadata", "sdtm_ct.csv"), stringsAsFactors = FALSE)
 
 message("ds_raw: ", nrow(ds_raw), " records, ",
@@ -99,7 +97,7 @@ ds <-
   # "Lost to Follow-Up" and "Study Terminated by Sponsor" as unmapped because
   # the study CT's collected values differ in wording or case. The upper-cased
   # raw values equal the C66727 submission values (checked in section 6).
-  # "Randomized" is not part of C66727. 
+  # "Randomized" is not part of C66727.
   # For other events, DSDECOD = OTHERSP (free text, no CT).
   assign_ct(
     raw_dat = condition_add(ds_raw, is.na(OTHERSP)),

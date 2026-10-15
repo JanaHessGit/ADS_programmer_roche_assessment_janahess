@@ -6,6 +6,7 @@
 # Input       : pharmaverseadam::adae - Adverse Events Analysis Dataset
 #               pharmaverseadam::adsl - Subject-Level Analysis Dataset
 # Output      : question_3_tlg/output/ae_summary_table.html - the table
+#               question_3_tlg/output/ae_summary_table.docx - editable copy
 #               question_3_tlg/output/ae_summary_table.rds  - gtsummary object
 #                                                           (used by the tests)
 #
