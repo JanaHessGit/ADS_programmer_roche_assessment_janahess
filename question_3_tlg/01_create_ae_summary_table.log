@@ -127,6 +127,10 @@ File HashSum: d6afb1a5add3cb93b57329033ea36046b08572fe
 --------------------------------------------------------------------------------
 -                               Masked Functions                               -
 --------------------------------------------------------------------------------
+function `dm` from {package:pharmaversesdtm} by .GlobalEnv
+function `ds` from {package:pharmaversesdtm} by .GlobalEnv
+function `ds_raw` from {package:pharmaverseraw} by .GlobalEnv
+function `labels` from {package:base} by .GlobalEnv
 function `ms` from {package:pharmaversesdtm} by package:lubridate
 function `intersect` from {package:dplyr, package:base} by package:lubridate
 function `setdiff` from {package:dplyr, package:base} by package:lubridate
@@ -159,9 +163,9 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-15 23:06:23 CEST
-End time: 2026-10-15 23:06:53 CEST
-Run time: 30 seconds
+Start time: 2026-10-15 23:11:19 CEST
+End time: 2026-10-15 23:11:48 CEST
+Run time: 29 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -
 --------------------------------------------------------------------------------

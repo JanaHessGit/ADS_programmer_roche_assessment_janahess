@@ -11,7 +11,7 @@ logrx link to repository: https://github.com/pharmaverse/logrx
 User: jana
 File Name: 02_create_visualizations.R
 File Path: /home/jana/Documents/Projekte/ADS_programmer_roche_assessment_janahess/question_3_tlg
-File HashSum: d960007dd6fd29edb23d0f9a2158f986b97724ec
+File HashSum: 5ad7197a86dbd5ad14e827979662992f5df1c6d2
 --------------------------------------------------------------------------------
 -                             Session Information                              -
 --------------------------------------------------------------------------------
@@ -134,6 +134,25 @@ File HashSum: d960007dd6fd29edb23d0f9a2158f986b97724ec
 --------------------------------------------------------------------------------
 -                               Masked Functions                               -
 --------------------------------------------------------------------------------
+function `dm` from {package:pharmaversesdtm} by .GlobalEnv
+function `ds` from {package:pharmaversesdtm} by .GlobalEnv
+function `ds_raw` from {package:pharmaverseraw} by .GlobalEnv
+function `labels` from {package:base} by .GlobalEnv
+function `vars` from {package:gtsummary, package:dplyr} by package:ggplot2
+function `as_label` from {package:dplyr} by package:ggplot2
+function `enexpr` from {package:dplyr} by package:ggplot2
+function `enexprs` from {package:dplyr} by package:ggplot2
+function `enquo` from {package:dplyr} by package:ggplot2
+function `enquos` from {package:dplyr} by package:ggplot2
+function `ensym` from {package:dplyr} by package:ggplot2
+function `ensyms` from {package:dplyr} by package:ggplot2
+function `expr` from {package:dplyr} by package:ggplot2
+function `quo` from {package:dplyr} by package:ggplot2
+function `quo_name` from {package:dplyr} by package:ggplot2
+function `quos` from {package:dplyr} by package:ggplot2
+function `sym` from {package:dplyr} by package:ggplot2
+function `syms` from {package:dplyr} by package:ggplot2
+function `Position` from {package:base} by package:ggplot2
 function `%>%` from {package:admiral, package:stringr, package:dplyr} by package:gtsummary
 function `all_of` from {package:dplyr} by package:gtsummary
 function `any_of` from {package:dplyr} by package:gtsummary
@@ -148,7 +167,6 @@ function `num_range` from {package:dplyr} by package:gtsummary
 function `one_of` from {package:dplyr} by package:gtsummary
 function `select` from {package:dplyr} by package:gtsummary
 function `starts_with` from {package:dplyr} by package:gtsummary
-function `vars` from {package:dplyr} by package:gtsummary
 function `where` from {package:dplyr} by package:gtsummary
 function `ms` from {package:pharmaversesdtm} by package:lubridate
 function `intersect` from {package:dplyr, package:base} by package:lubridate
@@ -184,9 +202,9 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-15 23:07:01 CEST
-End time: 2026-10-15 23:07:04 CEST
-Run time: 3 seconds
+Start time: 2026-10-15 23:12:38 CEST
+End time: 2026-10-15 23:12:39 CEST
+Run time: 1 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -
 --------------------------------------------------------------------------------

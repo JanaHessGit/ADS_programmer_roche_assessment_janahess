@@ -113,6 +113,19 @@ File HashSum: b1c076089d2ae2365d527beda7cf71b2c68964d2
 --------------------------------------------------------------------------------
 -                               Masked Functions                               -
 --------------------------------------------------------------------------------
+function `dm` from {package:pharmaversesdtm} by .GlobalEnv
+function `ds` from {package:pharmaversesdtm} by .GlobalEnv
+function `ds_raw` from {package:pharmaverseraw} by .GlobalEnv
+function `labels` from {package:base} by .GlobalEnv
+function `ts` from {package:stats} by package:pharmaversesdtm
+function `cm` from {package:grDevices} by package:pharmaversesdtm
+function `%>%` from {package:dplyr} by package:stringr
+function `filter` from {package:stats} by package:dplyr
+function `lag` from {package:stats} by package:dplyr
+function `intersect` from {package:base} by package:dplyr
+function `setdiff` from {package:base} by package:dplyr
+function `setequal` from {package:base} by package:dplyr
+function `union` from {package:base} by package:dplyr
 function `plot` from {package:base} by package:graphics
 function `install.packages` from {package:utils} by renv:shims
 function `remove.packages` from {package:utils} by renv:shims
@@ -122,7 +135,7 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                          Used Package and Functions                          -
 --------------------------------------------------------------------------------
-{!!! NOT FOUND !!!} as_num_safe
+{.GlobalEnv} as_num_safe
 {package:base} library, file.path, dir.create, message, nrow, stopifnot, any, is.na, c, paste0, toupper, as.numeric, rep, length, grepl, as.character, names, attr, duplicated, anyNA, all, %in%, as.Date, substr, warning, paste, print, saveRDS
 {package:dplyr} n_distinct, select, all_of, transmute, filter, distinct, left_join, mutate, coalesce, arrange, count, glimpse
 {package:sdtm.oak} generate_oak_id_vars, assign_no_ct, condition_add, oak_id_vars, assign_ct, hardcode_ct, assign_datetime, problems, derive_seq, derive_study_day
@@ -131,9 +144,9 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-15 23:05:49 CEST
-End time: 2026-10-15 23:05:52 CEST
-Run time: 3 seconds
+Start time: 2026-10-15 23:10:03 CEST
+End time: 2026-10-15 23:10:05 CEST
+Run time: 2 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -
 --------------------------------------------------------------------------------

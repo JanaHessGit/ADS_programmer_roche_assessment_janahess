@@ -104,7 +104,6 @@ plot_top10 <- top10 %>%
     x = "Percentage of Patients (%)",
     y = NULL
   ) +
-  theme_tlg +
   theme(
     panel.grid.major.x = element_line(),
     panel.grid.major.y = element_blank()
