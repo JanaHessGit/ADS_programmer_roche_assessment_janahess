@@ -11,12 +11,10 @@ with the additional variables requested in the assessment.
 | File | Content |
 |---|---|
 | `create_adsl.R` | ADSL program (deliverable) |
-| `R/adsl_specs.R` | Study-specific rules used by both program and tests: age-group lookup (`agegr9_lookup`) and valid-dose condition (`valid_dose_cond`) |
-| `run_question_2.R` | Runs the program with {logrx} (log file) and then the tests |
+| `specs/adsl_specs.R` | Study-specific rules used by both program and tests: age-group lookup (`agegr9_lookup`) and valid-dose condition (`valid_dose_cond`) |
 | `create_adsl.log` | {logrx} log – evidence that the program runs without errors or warnings |
-| `output/adsl.rds`, `output/adsl.csv` | Resulting ADSL (306 subjects) |
+| `output/adsl.rds`, `output/adsl.csv` | Resulting ADSL (306 subjects; DM variables + AGEGR9, AGEGR9N, TRTSDTM, TRTSTMF, TRTEDTM, ITTFL, LSTAVLDT) |
 | `tests/testthat/test-adsl.R` | Unit tests and independent QC (double programming) of all requested variables |
-| `tests/test_results.txt` | Results of the last test run |
 
 ## How to run
 
@@ -27,28 +25,41 @@ install.packages(c("admiral", "pharmaversesdtm", "pharmaverseadam",
                    "dplyr", "lubridate", "stringr", "logrx", "testthat"))
 ```
 
-Then, **from the repository root** (e.g. open the RStudio project):
+All commands are run **from the repository root**, i.e. with the repository
+folder as working directory (e.g. open the RStudio project).
+
+**Step 1 – Run the program and create the log file**
 
 ```r
-# Program + log file + tests
-source("question_2_adam/run_question_2.R")
+logrx::axecute(
+  file     = "question_2_adam/create_adsl.R",
+  log_name = "create_adsl.log",
+  log_path = "question_2_adam"
+)
 ```
 
-or in a terminal: `Rscript question_2_adam/run_question_2.R`
+This runs `create_adsl.R` and writes:
 
-Only the program with a log file:
+- `question_2_adam/create_adsl.log` – the log file. Its **Errors** and
+  **Warnings** sections are empty when the program runs error-free. It also
+  records the R and package versions, run time and a hash of the program.
+- `question_2_adam/output/adsl.rds` and `adsl.csv` – the ADSL dataset.
 
-```r
-logrx::axecute("question_2_adam/create_adsl.R",
-               log_name = "create_adsl.log",
-               log_path = "question_2_adam")
+Alternative in a terminal (without {logrx}, console output only):
+
+```
+Rscript question_2_adam/create_adsl.R > question_2_adam/create_adsl.log 2>&1
 ```
 
-Only the tests (after the program has been run):
+**Step 2 – Run the tests (after step 1)**
 
 ```r
 testthat::test_dir("question_2_adam/tests/testthat")
 ```
+
+All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 22 ]`). The
+reference check against `pharmaverseadam::adsl` is skipped if
+{pharmaverseadam} is not installed.
 
 ## Derivations
 
@@ -56,9 +67,9 @@ testthat::test_dir("question_2_adam/tests/testthat")
 |---|---|---|
 | `AGEGR9`, `AGEGR9N` | `"<18"` = 1, `"18 - 50"` = 2 (18 and 50 inclusive), `">50"` = 3; missing if AGE is missing | `derive_vars_cat()` |
 | `TRTSDTM`, `TRTSTMF` | First EX record (by start datetime, then EXSEQ) with a **valid dose** and a complete start date. Missing hours/minutes/seconds imputed with 00; flag not set if only seconds are missing | `derive_vars_dtm()` (`highest_imputation = "h"`, `time_imputation = "first"`, `ignore_seconds_flag = TRUE`), `derive_vars_merged()` |
-| `ITTFL` | `"Y"` if `DM.ARM` is not missing, else `"N"` | `mutate()` |
+| `ITTFL` | `"Y"` if `DM.ARM` is not missing, else `"N"` | `derive_var_merged_exist_flag()` |
 | `LSTAVLDT` | Latest of: last complete VS date with a valid result, last complete AE start date, last complete DS start date, last valid-dose date (date part of `TRTEDTM`) | `derive_vars_extreme_event()`, `convert_dtc_to_dt()` |
-| Supporting: `TRT01P`, `TRT01A`, `TRTEDTM`/`TRTETMF`, `TRTSDT`, `TRTEDT`, `TRTDURD`, `SAFFL` | As in the Pharmaverse ADSL example (`TRTEDTM` is needed for `LSTAVLDT`) | `derive_vars_merged()`, `derive_vars_dtm_to_dt()`, `derive_var_trtdurd()`, `derive_var_merged_exist_flag()` |
+| Supporting: `TRTEDTM` | Last EX record with a valid dose and a complete end date (missing time imputed with 23:59:59). Referenced as ADSL.TRTEDTM in the LSTAVLDT specification and kept for traceability. `TRTETMF`, `TRTSDT`, `TRTEDT` are derived as intermediate variables and dropped | `derive_vars_merged()`, `derive_vars_dtm_to_dt()` |
 
 **Valid dose:** `EXDOSE > 0`, or `EXDOSE == 0` and `EXTRT` contains `"PLACEBO"`.
 
@@ -86,7 +97,7 @@ testthat::test_dir("question_2_adam/tests/testthat")
 
 ## Tests
 
-`tests/testthat/test-adsl.R` contains 13 tests (22 expectations):
+`tests/testthat/test-adsl.R` contains 12 tests (22 expectations):
 
 - **Unit tests** of the derivation rules on dummy data, including boundary
   values (ages 17, 18, 50, 51, missing), the valid-dose definition and the

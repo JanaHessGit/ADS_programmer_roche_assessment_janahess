@@ -2,7 +2,7 @@
 # Tests for question_2_adam/create_adsl.R
 #
 # Three types of tests:
-#   1. Unit tests of the derivation rules in R/adsl_specs.R on small dummy
+#   1. Unit tests of the derivation rules in specs/adsl_specs.R on small dummy
 #      data, including boundary values (e.g. age 17/18/50/51) that do not
 #      occur in the study data.
 #   2. Independent QC ("double programming"): every requested variable is
@@ -20,12 +20,12 @@ library(admiral)
 library(dplyr, warn.conflicts = FALSE)
 library(lubridate, warn.conflicts = FALSE)
 library(stringr)
-
+library(pharmaversesdtm)
 # testthat 3rd edition (needed for expect_equal(..., ignore_attr = TRUE))
 local_edition(3)
 
 # testthat runs the tests with tests/testthat as working directory
-source(test_path("..", "..", "R", "adsl_specs.R"))
+source(test_path("..", "..", "specs", "adsl_specs.R"))
 adsl_path <- test_path("..", "..", "output", "adsl.rds")
 
 # -----------------------------------------------------------------------------

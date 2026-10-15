@@ -1,5 +1,5 @@
 # =============================================================================
-# Program : R/adsl_specs.R
+# Program : specs/adsl_specs.R
 # Purpose : Study-specific derivation rules for ADSL that are shared between
 #           the production program (create_adsl.R) and the tests
 #           (tests/testthat/test-adsl.R), so that both use exactly the same

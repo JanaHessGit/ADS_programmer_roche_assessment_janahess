@@ -24,36 +24,29 @@
 #                     date with a valid result, last complete AE onset date,
 #                     last complete disposition date and last valid dose date
 #
-# Supporting variables (Pharmaverse ADSL example):
-#   TRT01P, TRT01A, TRTEDTM / TRTETMF, TRTSDT, TRTEDT, TRTDURD, SAFFL
-#   (TRTEDTM is required by the LSTAVLDT specification)
+# Supporting variable (kept for traceability of LSTAVLDT):
+#   TRTEDTM           Datetime of last exposure with a valid dose
+#                     (referenced as ADSL.TRTEDTM in the LSTAVLDT specification)
+# Intermediate variables (derived, then dropped): TRTETMF, TRTSDT, TRTEDT
 #
-# How to run  : from the repository root, with log file and tests:
-#                 source("question_2_adam/run_question_2.R")
-#               or only the program, with log file:
+# How to run  : from the repository root, with log file (see README.md):
 #                 logrx::axecute("question_2_adam/create_adsl.R",
 #                                log_name = "create_adsl.log",
 #                                log_path = "question_2_adam")
+#               Tests (after running the program):
+#                 testthat::test_dir("question_2_adam/tests/testthat")
 #
-# R packages  : admiral, pharmaversesdtm, dplyr, lubridate, stringr, rlang
 # =============================================================================
 
 library(admiral)
 library(dplyr, warn.conflicts = FALSE)
 library(lubridate, warn.conflicts = FALSE)
 library(stringr)
-library(logrx)
-
 
 # All paths are relative to the repository root
 prog_dir <- "question_2_adam"
-out_dir  <- file.path(prog_dir, "output")
+out_dir <- file.path(prog_dir, "output")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
-
-# Study-specific derivation rules shared with the tests:
-#   agegr9_lookup   - definition of AGEGR9 / AGEGR9N
-#   valid_dose_cond - definition of a valid dose in EX
-source(file.path(prog_dir, "R", "adsl_specs.R"))
 
 # -----------------------------------------------------------------------------
 # 1. Read input SDTM data
@@ -66,6 +59,12 @@ ex <- convert_blanks_to_na(pharmaversesdtm::ex)
 ds <- convert_blanks_to_na(pharmaversesdtm::ds)
 ae <- convert_blanks_to_na(pharmaversesdtm::ae)
 
+
+# Study-specific derivation rules shared with the tests:
+#   agegr9_lookup   - definition of AGEGR9 / AGEGR9N
+#   valid_dose_cond - definition of a valid dose in EX
+source(file.path(prog_dir, "specs", "adsl_specs.R"))
+
 # -----------------------------------------------------------------------------
 # 2. DM is the basis of ADSL: one record per subject
 # -----------------------------------------------------------------------------
@@ -73,20 +72,13 @@ adsl <- dm %>%
   select(-DOMAIN)
 
 # -----------------------------------------------------------------------------
-# 3. Treatment variables (TRT01P, TRT01A) - as in the Pharmaverse example
-# -----------------------------------------------------------------------------
-adsl <- dm %>% 
-  mutate(TRT01P = ARM, TRT01A = ACTARM)
-
-
-# -----------------------------------------------------------------------------
-# 4. AGEGR9 / AGEGR9N - age groups (definition in R/adsl_specs.R)
+# 3. AGEGR9 / AGEGR9N - age groups
 # -----------------------------------------------------------------------------
 adsl <- adsl %>%
   derive_vars_cat(definition = agegr9_lookup)
 
 # -----------------------------------------------------------------------------
-# 5. TRTSDTM / TRTSTMF and TRTEDTM / TRTETMF - treatment start/end datetime
+# 4. TRTSDTM / TRTSTMF and TRTEDTM / TRTETMF - treatment start/end datetime
 # -----------------------------------------------------------------------------
 # Convert EX start/end dates (ISO 8601 character) to numeric datetimes:
 #   * highest_imputation = "h": only time parts (hours, minutes, seconds) are
@@ -105,6 +97,7 @@ ex_ext <- ex %>%
     time_imputation     = "first",
     ignore_seconds_flag = TRUE
   ) %>%
+  # not specifically mentioned in specifications but needed for LSTAVLDT
   derive_vars_dtm(
     dtc                 = EXENDTC,
     new_vars_prefix     = "EXEN",
@@ -117,27 +110,27 @@ adsl <- adsl %>%
   # First exposure record with a valid dose and a complete start date
   derive_vars_merged(
     dataset_add = ex_ext,
-    by_vars     = exprs(STUDYID, USUBJID),
-    filter_add  = !!valid_dose_cond & !is.na(EXSTDTM),
-    new_vars    = exprs(TRTSDTM = EXSTDTM, TRTSTMF = EXSTTMF),
-    order       = exprs(EXSTDTM, EXSEQ),
-    mode        = "first"
+    by_vars = exprs(STUDYID, USUBJID),
+    filter_add = !!valid_dose_cond & !is.na(EXSTDTM),
+    new_vars = exprs(TRTSDTM = EXSTDTM, TRTSTMF = EXSTTMF),
+    order = exprs(EXSTDTM, EXSEQ),
+    mode = "first"
   ) %>%
   # Last exposure record with a valid dose and a complete end date
   derive_vars_merged(
     dataset_add = ex_ext,
-    by_vars     = exprs(STUDYID, USUBJID),
-    filter_add  = !!valid_dose_cond & !is.na(EXENDTM),
-    new_vars    = exprs(TRTEDTM = EXENDTM, TRTETMF = EXENTMF),
-    order       = exprs(EXENDTM, EXSEQ),
-    mode        = "last"
+    by_vars = exprs(STUDYID, USUBJID),
+    filter_add = !!valid_dose_cond & !is.na(EXENDTM),
+    new_vars = exprs(TRTEDTM = EXENDTM, TRTETMF = EXENTMF),
+    order = exprs(EXENDTM, EXSEQ),
+    mode = "last"
   ) %>%
-  # Treatment start/end dates (TRTSDT, TRTEDT) and duration (TRTDURD)
-  derive_vars_dtm_to_dt(source_vars = exprs(TRTSDTM, TRTEDTM)) %>%
-  derive_var_trtdurd()
+  # Treatment start/end dates (TRTSDT, TRTEDT)
+  derive_vars_dtm_to_dt(source_vars = exprs(TRTSDTM, TRTEDTM))
+
 
 # -----------------------------------------------------------------------------
-# 6. Population flags
+# 5. Population flags
 # -----------------------------------------------------------------------------
 # ITTFL: "Y" if DM.ARM is not missing, else "N" (as specified).
 # Note: in pharmaversesdtm::dm, ARM is populated for all subjects, including
@@ -153,20 +146,9 @@ adsl <- adsl %>%
     missing_value = "N"
   )
 
-# SAFFL: "Y" if the subject received at least one valid dose (Pharmaverse
-# example)
-adsl <- adsl %>%
-  derive_var_merged_exist_flag(
-    dataset_add   = ex,
-    by_vars       = exprs(STUDYID, USUBJID),
-    new_var       = SAFFL,
-    condition     = !!valid_dose_cond,
-    false_value   = "N",
-    missing_value = "N"
-  )
 
 # -----------------------------------------------------------------------------
-# 7. LSTAVLDT - last known alive date
+# 6. LSTAVLDT - last known alive date
 # -----------------------------------------------------------------------------
 # For each source, only COMPLETE dates are used: convert_dtc_to_dt() with the
 # default highest_imputation = "n" returns NA for partial dates, so those
@@ -182,9 +164,9 @@ adsl <- adsl %>%
     by_vars = exprs(STUDYID, USUBJID),
     events = list(
       event(
-        dataset_name  = "vs",
-        order         = exprs(VSDTC, VSSEQ),
-        condition     = !(is.na(VSSTRESN) & is.na(VSSTRESC)) &
+        dataset_name = "vs",
+        order = exprs(VSDTC, VSSEQ),
+        condition = !(is.na(VSSTRESN) & is.na(VSSTRESC)) &
           !is.na(convert_dtc_to_dt(VSDTC)),
         set_values_to = exprs(
           LSTAVLDT = convert_dtc_to_dt(VSDTC),
@@ -192,18 +174,18 @@ adsl <- adsl %>%
         )
       ),
       event(
-        dataset_name  = "ae",
-        order         = exprs(AESTDTC, AESEQ),
-        condition     = !is.na(convert_dtc_to_dt(AESTDTC)),
+        dataset_name = "ae",
+        order = exprs(AESTDTC, AESEQ),
+        condition = !is.na(convert_dtc_to_dt(AESTDTC)),
         set_values_to = exprs(
           LSTAVLDT = convert_dtc_to_dt(AESTDTC),
           seq      = AESEQ
         )
       ),
       event(
-        dataset_name  = "ds",
-        order         = exprs(DSSTDTC, DSSEQ),
-        condition     = !is.na(convert_dtc_to_dt(DSSTDTC)),
+        dataset_name = "ds",
+        order = exprs(DSSTDTC, DSSEQ),
+        condition = !is.na(convert_dtc_to_dt(DSSTDTC)),
         set_values_to = exprs(
           LSTAVLDT = convert_dtc_to_dt(DSSTDTC),
           seq      = DSSEQ
@@ -215,59 +197,52 @@ adsl <- adsl %>%
         set_values_to = exprs(LSTAVLDT = TRTEDT, seq = 0)
       )
     ),
-    source_datasets  = list(vs = vs, ae = ae, ds = ds, adsl = adsl),
+    source_datasets = list(vs = vs, ae = ae, ds = ds, adsl = adsl),
     tmp_event_nr_var = event_nr,
-    order            = exprs(LSTAVLDT, seq, event_nr),
-    mode             = "last",
-    new_vars         = exprs(LSTAVLDT)
+    order = exprs(LSTAVLDT, seq, event_nr),
+    mode = "last",
+    new_vars = exprs(LSTAVLDT)
   )
 
+# Drop intermediate variables: keep only the requested variables plus
+# TRTEDTM (referenced by the LSTAVLDT specification, kept for traceability)
+adsl <- adsl %>% select(-c("TRTETMF", "TRTSDT", "TRTEDT"))
+
 # -----------------------------------------------------------------------------
-# 8. Variable labels
+# 7. Variable labels
 # -----------------------------------------------------------------------------
 new_labels <- c(
-  TRT01P   = "Planned Treatment for Period 01",
-  TRT01A   = "Actual Treatment for Period 01",
   AGEGR9   = "Pooled Age Group 9",
   AGEGR9N  = "Pooled Age Group 9 (N)",
   TRTSDTM  = "Datetime of First Exposure to Treatment",
   TRTSTMF  = "Time of First Exposure Imput. Flag",
   TRTEDTM  = "Datetime of Last Exposure to Treatment",
-  TRTETMF  = "Time of Last Exposure Imput. Flag",
-  TRTSDT   = "Date of First Exposure to Treatment",
-  TRTEDT   = "Date of Last Exposure to Treatment",
-  TRTDURD  = "Total Treatment Duration (Days)",
   ITTFL    = "Intent-To-Treat Population Flag",
-  SAFFL    = "Safety Population Flag",
   LSTAVLDT = "Last Date Known Alive"
 )
 for (v in names(new_labels)) attr(adsl[[v]], "label") <- new_labels[[v]]
 
 # -----------------------------------------------------------------------------
-# 9. Checks (the program stops with an error if any check fails)
+# 8. Checks (the program stops with an error if any check fails)
 # -----------------------------------------------------------------------------
 stopifnot(
-  "One record per subject"          = !any(duplicated(adsl$USUBJID)),
-  "All DM subjects are in ADSL"     = setequal(adsl$USUBJID, dm$USUBJID),
-  "All new variables present"       = all(names(new_labels) %in% names(adsl)),
-  "AGEGR9 only uses defined values" = all(adsl$AGEGR9 %in%
-                                            c("<18", "18 - 50", ">50", NA)),
-  "ITTFL is Y or N"                 = all(adsl$ITTFL %in% c("Y", "N")),
-  "TRTSDTM <= TRTEDTM"              = all(adsl$TRTSDTM <= adsl$TRTEDTM,
-                                          na.rm = TRUE),
-  "LSTAVLDT >= TRTEDT"              = all(adsl$LSTAVLDT >= adsl$TRTEDT,
-                                          na.rm = TRUE)
+  "One record per subject" = !any(duplicated(adsl$USUBJID)),
+  "All DM subjects are in ADSL" = setequal(adsl$USUBJID, dm$USUBJID),
+  "All new variables present" = all(names(new_labels) %in% names(adsl)),
+  "AGEGR9 only uses defined values" =
+    all(adsl$AGEGR9 %in% c("<18", "18 - 50", ">50", NA)),
+  "ITTFL is Y or N" = all(adsl$ITTFL %in% c("Y", "N"))
 )
 
 # Summaries for the log
 message("ADSL: ", nrow(adsl), " subjects, ", ncol(adsl), " variables")
 print(count(adsl, AGEGR9N, AGEGR9))
-print(count(adsl, ITTFL, SAFFL, TRT01A))
+print(count(adsl, ITTFL))
 print(count(adsl, TRTSTMF, has_TRTSDTM = !is.na(TRTSDTM)))
 print(summary(adsl$LSTAVLDT))
 
 # -----------------------------------------------------------------------------
-# 10. Save the output
+# 9. Save the output
 # -----------------------------------------------------------------------------
 saveRDS(adsl, file.path(out_dir, "adsl.rds"))
 write.csv(adsl, file.path(out_dir, "adsl.csv"), row.names = FALSE, na = "")
