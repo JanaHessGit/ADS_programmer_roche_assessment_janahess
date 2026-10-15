@@ -28,7 +28,6 @@ library(ggplot2)
 library(dplyr, warn.conflicts = FALSE)
 library(pharmaverseadam)
 
-
 prog_dir <- "question_3_tlg"
 out_dir  <- file.path(prog_dir, "output")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
@@ -60,9 +59,6 @@ theme_tlg <- theme_minimal(base_size = 11) +
 # 2. Plot 1 - AE severity distribution by treatment
 # -----------------------------------------------------------------------------
 severity_data <- count_ae_by_severity(adae)
-severity_totals <- severity_data %>%
-  group_by(ACTARM) %>%
-  summarise(total = sum(n), .groups = "drop")
 
 print(severity_data)
 
@@ -73,9 +69,7 @@ plot_severity <- ggplot(severity_data, aes(x = ACTARM, y = n, fill = AESEV)) +
     x = "Treatment Arm",
     y = "Count of AEs",
     fill = "Severity/Intensity"
-
   ) +
-
   theme_tlg
 
 ggsave(file.path(out_dir, "ae_severity_by_treatment.png"), plot_severity,
@@ -110,6 +104,7 @@ plot_top10 <- top10 %>%
     x = "Percentage of Patients (%)",
     y = NULL
   ) +
+  theme_tlg +
   theme(
     panel.grid.major.x = element_line(),
     panel.grid.major.y = element_blank()

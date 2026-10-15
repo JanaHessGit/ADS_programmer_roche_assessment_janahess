@@ -7,7 +7,7 @@
 # =============================================================================
 
 #' Severity levels in their natural (ordinal) order
- severity_levels <- c("MILD", "MODERATE", "SEVERE")
+severity_levels <- c("MILD", "MODERATE", "SEVERE")
 
 #' Number of AE records by treatment arm and severity
 #'
@@ -48,23 +48,22 @@ top_ae_incidence <- function(adae, n_top = 10,
   stopifnot(all(c("USUBJID", "AETERM") %in% names(adae)))
   stopifnot(denominator >= dplyr::n_distinct(adae$USUBJID))
 
-adae %>%
-  dplyr::filter(!is.na(.data$AETERM)) %>%
-  # a subject counts once per term, however many records it has
-  dplyr::distinct(.data$USUBJID, .data$AETERM) %>%
-  dplyr::count(.data$AETERM, name = "n") %>%
-  dplyr::arrange(dplyr::desc(.data$n), .data$AETERM) %>%
-  dplyr::slice_head(n = n_top) %>%
-  dplyr::mutate(
-    N   = denominator,
-    pct = .data$n / .data$N,
-    # exact (Clopper-Pearson) 95% CI; binom.test() takes one count at a
-    # time, so it is run once per term and returns c(lower, upper)
-    ci  = purrr::map2(.data$n, .data$N,
-                      \(k, total) stats::binom.test(k, total)$conf.int),
-    ci_low  = purrr::map_dbl(.data$ci, 1),
-    ci_high = purrr::map_dbl(.data$ci, 2)
-  ) %>%
-  dplyr::select(-"ci")
-
+  adae %>%
+    dplyr::filter(!is.na(.data$AETERM)) %>%
+    # a subject counts once per term, however many records it has
+    dplyr::distinct(.data$USUBJID, .data$AETERM) %>%
+    dplyr::count(.data$AETERM, name = "n") %>%
+    dplyr::arrange(dplyr::desc(.data$n), .data$AETERM) %>%
+    dplyr::slice_head(n = n_top) %>%
+    dplyr::mutate(
+      N   = denominator,
+      pct = .data$n / .data$N,
+      # exact (Clopper-Pearson) 95% CI; binom.test() takes one count at a
+      # time, so it is run once per term and returns c(lower, upper)
+      ci  = purrr::map2(.data$n, .data$N,
+                        \(k, total) stats::binom.test(k, total)$conf.int),
+      ci_low  = purrr::map_dbl(.data$ci, 1),
+      ci_high = purrr::map_dbl(.data$ci, 2)
+    ) %>%
+    dplyr::select(-"ci")
 }

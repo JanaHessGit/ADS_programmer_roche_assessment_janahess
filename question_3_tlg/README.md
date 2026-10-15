@@ -12,7 +12,7 @@ Creates a summary table of treatment-emergent adverse events with
 | `02_create_visualizations.R` | Severity bar chart and top-10 AE plot (deliverable) |
 | `R/tlg_functions.R` | Helper functions used by `02_create_visualizations.R` and the tests: `count_ae_by_severity()`, `top_ae_incidence()` |
 | `01_create_ae_summary_table.log`, `02_create_visualizations.log` | {logrx} logs – evidence that both programs run without errors or warnings |
-| `output/ae_summary_table.html` | TEAE summary table |
+| `output/ae_summary_table.html`, `output/ae_summary_table.docx` | TEAE summary table (HTML; DOCX as editable copy) |
 | `output/ae_severity_by_treatment.png` | Plot 1 – AE severity distribution by treatment |
 | `output/top10_ae_incidence.png` | Plot 2 – Top 10 most frequent AEs with 95% CIs |
 | `output/*.csv`, `output/ae_summary_table.rds` | Data behind the plots and the table object, used for QC/tests |
@@ -79,10 +79,8 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 41 ]`).
 
 ### Plot 1 – AE severity distribution by treatment
 
-Stacked bars of the number of AE **records** in ADAE by `ACTARM` and `AESEV`,
-with the total per arm above each bar. Severity is ordinal, so one blue hue
-runs from light (MILD) to dark (SEVERE); the palette was checked for
-colour-blind safety.
+Stacked bars of the number of AE **records** in ADAE by `ACTARM` and `AESEV`
+(MILD, MODERATE, SEVERE), as in the sample output.
 
 ### Plot 2 – Top 10 most frequent AEs
 

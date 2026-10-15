@@ -27,7 +27,6 @@
 # =============================================================================
 library(pharmaverseadam)
 library(gtsummary)
-library(webshot2)
 library(dplyr, warn.conflicts = FALSE)
 
 prog_dir <- "question_3_tlg"
@@ -82,9 +81,11 @@ print(as_tibble(ae_table), n = 15)
 # -----------------------------------------------------------------------------
 # 3. Save the output
 # -----------------------------------------------------------------------------
+# HTML is the main output; DOCX is an additional editable version (written by
+# {gt} directly, no browser needed). A PDF export is not created because it
+# requires {webshot2} and a local Chrome installation.
 gt::gtsave(as_gt(ae_table), file.path(out_dir, "ae_summary_table.html"))
-gt::gtsave(as_gt(ae_table), file.path(out_dir, "ae_summary_table.docx"))
-gt::gtsave(as_gt(ae_table), file.path(out_dir, "ae_summary_table.pdf"))
 saveRDS(ae_table, file.path(out_dir, "ae_summary_table.rds"))
+gt::gtsave(as_gt(ae_table), file.path(out_dir, "ae_summary_table.docx"))
 
 message("AE summary table saved to ", out_dir)

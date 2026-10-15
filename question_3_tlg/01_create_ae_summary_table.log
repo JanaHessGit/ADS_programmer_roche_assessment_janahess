@@ -11,7 +11,7 @@ logrx link to repository: https://github.com/pharmaverse/logrx
 User: jana
 File Name: 01_create_ae_summary_table.R
 File Path: /home/jana/Documents/Projekte/ADS_programmer_roche_assessment_janahess/question_3_tlg
-File HashSum: f6f62e329abb1e07001546637aac164c973e3da6
+File HashSum: 102d2a69f26c607201c314ef9b9870683a964385
 --------------------------------------------------------------------------------
 -                             Session Information                              -
 --------------------------------------------------------------------------------
@@ -239,12 +239,13 @@ function `kronecker` from {package:base} by package:methods
 {package:dplyr} filter, n_distinct
 {package:gt} gtsave
 {package:gtsummary} select, tbl_hierarchical, add_overall, sort_hierarchical, everything, modify_caption, modify_footnote_header, all_stat_cols, as_tibble, as_gt
+{package:webshot2} %>%
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-15 22:37:42 CEST
-End time: 2026-10-15 22:38:05 CEST
-Run time: 23 seconds
+Start time: 2026-10-15 22:56:09 CEST
+End time: 2026-10-15 22:56:30 CEST
+Run time: 21 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -
 --------------------------------------------------------------------------------
@@ -258,7 +259,6 @@ Warnings:
 --------------------------------------------------------------------------------
 Messages:
 	Safety population: 254 subjects; TEAE records: 1122 from 217 subjects
-	file:////tmp/Rtmp4jSjCc/file10cad3cd1768c.html screenshot completed
 	AE summary table saved to question_3_tlg/output
 Output:
 	# A tibble: 254 × 5

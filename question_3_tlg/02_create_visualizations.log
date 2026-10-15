@@ -11,7 +11,7 @@ logrx link to repository: https://github.com/pharmaverse/logrx
 User: jana
 File Name: 02_create_visualizations.R
 File Path: /home/jana/Documents/Projekte/ADS_programmer_roche_assessment_janahess/question_3_tlg
-File HashSum: bc4fc212c860a9a37b19110c9f32cdadae3ec832
+File HashSum: d960007dd6fd29edb23d0f9a2158f986b97724ec
 --------------------------------------------------------------------------------
 -                             Session Information                              -
 --------------------------------------------------------------------------------
@@ -236,8 +236,7 @@ function `kronecker` from {package:base} by package:methods
 -                          Used Package and Functions                          -
 --------------------------------------------------------------------------------
 {.GlobalEnv} count_ae_by_severity, top_ae_incidence
-{package:base} library, file.path, dir.create, source, stopifnot, anyNA, sum, print, unique, c, paste0, message
-{package:dplyr} group_by, summarise
+{package:base} library, file.path, dir.create, source, stopifnot, anyNA, print, unique, c, paste0, message
 {package:ggplot2} theme_minimal, theme, element_blank, element_text, ggplot, aes, geom_col, labs, ggsave, geom_errorbar, geom_point, scale_x_continuous, expansion, element_line
 {package:gtsummary} mutate
 {package:scales} label_percent
@@ -247,8 +246,8 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-15 22:40:26 CEST
-End time: 2026-10-15 22:40:27 CEST
+Start time: 2026-10-15 22:56:31 CEST
+End time: 2026-10-15 22:56:32 CEST
 Run time: 1 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -
