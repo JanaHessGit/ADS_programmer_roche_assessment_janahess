@@ -1871,6 +1871,62 @@
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
     },
+    "logrx": {
+      "Package": "logrx",
+      "Version": "0.4.0",
+      "Source": "Repository",
+      "Title": "A Logging Utility Focus on Clinical Trial Programming Workflows",
+      "Authors@R": "c( person(given = \"Nathan\", family = \"Kosiba\", email = \"nhkosiba@gmail.com\", role = c(\"aut\", \"cre\")), person(given = \"Thomas\", family = \"Bermudez\", email = \"thomas.a.bermudez@gsk.com\", role = \"aut\"), person(given = \"Ben\",  family = \"Straub\", email = \"ben.x.straub@gsk.com\",  role = \"aut\"), person(given = \"Michael\", family = \"Rimler\", email = \"michael.s.rimler@gsk.com\", role = \"aut\"), person(given = \"Nicholas\", family = \"Masel\", email = \"nmasel@its.jnj.com\", role = \"aut\"), person(given = \"Sam\", family = \"Parmar\", email = \"samir.parmar@pfizer.com\", role = \"aut\"), person(given = \"GSK/Atorus JPT\", role = c(\"cph\", \"fnd\")) )",
+      "Description": "A utility to facilitate the logging and review of R programs in clinical trial programming workflows.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://pharmaverse.github.io/logrx/, https://github.com/pharmaverse/logrx",
+      "BugReports": "https://github.com/pharmaverse/logrx/issues",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "RoxygenNote": "7.3.2",
+      "Imports": [
+        "dplyr (>= 1.0.0)",
+        "magrittr",
+        "purrr",
+        "rlang",
+        "stats",
+        "tidyr",
+        "stringr",
+        "sessioninfo (>= 1.2)",
+        "stringi",
+        "tibble",
+        "digest",
+        "lifecycle",
+        "methods"
+      ],
+      "Suggests": [
+        "testthat (>= 3.0.0)",
+        "knitr",
+        "rmarkdown",
+        "withr",
+        "covr",
+        "pkgdown",
+        "Tplyr",
+        "haven",
+        "lintr (>= 3.1.1)",
+        "xml2",
+        "here",
+        "readr",
+        "rstudioapi",
+        "tidyselect",
+        "renv",
+        "yaml"
+      ],
+      "VignetteBuilder": "knitr",
+      "Config/testthat/edition": "3",
+      "Depends": [
+        "R (>= 4.0.0)"
+      ],
+      "NeedsCompilation": "no",
+      "Author": "Nathan Kosiba [aut, cre], Thomas Bermudez [aut], Ben Straub [aut], Michael Rimler [aut], Nicholas Masel [aut], Sam Parmar [aut], GSK/Atorus JPT [cph, fnd]",
+      "Maintainer": "Nathan Kosiba <nhkosiba@gmail.com>",
+      "Repository": "CRAN"
+    },
     "lubridate": {
       "Package": "lubridate",
       "Version": "1.9.5",
@@ -2999,6 +3055,44 @@
       "Config/testthat/parallel": "true",
       "NeedsCompilation": "no",
       "Author": "Rammprasad Ganapathy [aut, cre], Adam Forys [aut], Edgar Manukyan [aut], Rosemary Li [aut], Preetesh Parikh [aut], Lisa Houterloot [aut], Yogesh Gupta [aut], Omar Garcia [aut], Ramiro Magno [aut] (ORCID: <https://orcid.org/0000-0001-5226-3441>), Kamil Sijko [aut] (ORCID: <https://orcid.org/0000-0002-2203-1065>), Shiyu Chen [aut], Pattern Institute [cph, fnd], F. Hoffmann-La Roche AG [cph, fnd], Pfizer Inc [cph, fnd], Mohsin Uzzama [aut], Transition Technologies Science [cph, fnd]",
+      "Repository": "CRAN"
+    },
+    "sessioninfo": {
+      "Package": "sessioninfo",
+      "Version": "1.2.4",
+      "Source": "Repository",
+      "Title": "R Session Information",
+      "Authors@R": "c( person(\"Gábor\", \"Csárdi\", , \"csardi.gabor@gmail.com\", role = \"cre\"), person(\"Hadley\", \"Wickham\", role = \"aut\"), person(\"Winston\", \"Chang\", role = \"aut\"), person(\"Robert\", \"Flight\", role = \"aut\"), person(\"Kirill\", \"Müller\", role = \"aut\"), person(\"Jim\", \"Hester\", role = \"aut\"), person(\"R Core team\", role = \"ctb\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
+      "Maintainer": "Gábor Csárdi <csardi.gabor@gmail.com>",
+      "Description": "Query and print information about the current R session.  It is similar to 'utils::sessionInfo()', but includes more information about packages, and where they were installed from.",
+      "License": "GPL-2",
+      "URL": "https://sessioninfo.r-lib.org, https://github.com/r-lib/sessioninfo",
+      "BugReports": "https://github.com/r-lib/sessioninfo/issues",
+      "Depends": [
+        "R (>= 3.4)"
+      ],
+      "Imports": [
+        "cli (>= 3.1.0)",
+        "tools",
+        "utils"
+      ],
+      "Suggests": [
+        "callr",
+        "covr",
+        "gh",
+        "reticulate",
+        "rmarkdown",
+        "testthat (>= 3.2.0)",
+        "withr"
+      ],
+      "Config/Needs/website": "pkgdown, tidyverse/tidytemplate",
+      "Config/testthat/edition": "3",
+      "Config/testthat/parallel": "true",
+      "Config/usethis/last-upkeep": "2025-05-07",
+      "Encoding": "UTF-8",
+      "Config/roxygen2/version": "8.0.0",
+      "NeedsCompilation": "no",
+      "Author": "Gábor Csárdi [cre], Hadley Wickham [aut], Winston Chang [aut], Robert Flight [aut], Kirill Müller [aut], Jim Hester [aut], R Core team [ctb], Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Repository": "CRAN"
     },
     "stringi": {

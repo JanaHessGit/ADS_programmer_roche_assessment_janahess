@@ -22,6 +22,10 @@ Creates a summary table of treatment-emergent adverse events with
 
 Install the packages once:
 
+Recommended: run renv::restore() from the repository root (see main README).
+
+OR
+
 ```r
 install.packages(c("gtsummary", "gt", "ggplot2", "dplyr", "tidyr", "purrr",
                    "scales", "pharmaverseadam", "logrx", "testthat"))

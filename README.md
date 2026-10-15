@@ -59,6 +59,17 @@ Each folder contains:
      "purrr", "stringr", "lubridate", "scales", "logrx", "testthat"
    ))
    ```
+   OR
+
+    Restore the package versions used for this submission (recorded in
+    `renv.lock`, R 4.6.0):
+
+    ```r
+      renv::restore()
+    ```
+
+      renv is activated automatically when R starts in the repository folder
+      (`.Rprofile`).
 
 3. Run each program with a log file, then its tests, e.g. for Question 1:
 

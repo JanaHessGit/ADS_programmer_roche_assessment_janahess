@@ -20,6 +20,10 @@ with the additional variables requested in the assessment.
 
 Install the packages once:
 
+Recommended: run renv::restore() from the repository root (see main README).
+
+OR
+
 ```r
 install.packages(c("admiral", "pharmaversesdtm", "pharmaverseadam",
                    "dplyr", "lubridate", "stringr", "logrx", "testthat"))
