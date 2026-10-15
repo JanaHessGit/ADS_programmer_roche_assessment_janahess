@@ -18,9 +18,16 @@ Creates the SDTM **DS (Disposition)** domain from the raw eCRF data
 
 Install the packages once:
 
-Recommended: run renv::restore() from the repository root (see main README).
+Recommended: run 
+
+```r
+renv::restore() 
+```
+
+from the repository root (see main README).
 
 OR
+
 ```r
 install.packages(c("sdtm.oak", "pharmaverseraw", "pharmaversesdtm",
                    "dplyr", "stringr", "lubridate", "logrx", "testthat"))

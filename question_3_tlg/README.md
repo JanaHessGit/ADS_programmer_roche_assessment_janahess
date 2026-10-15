@@ -22,7 +22,13 @@ Creates a summary table of treatment-emergent adverse events with
 
 Install the packages once:
 
-Recommended: run renv::restore() from the repository root (see main README).
+Recommended: run 
+
+```r
+renv::restore() 
+```
+
+from the repository root (see main README).
 
 OR
 
