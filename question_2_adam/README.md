@@ -67,7 +67,7 @@ Rscript question_2_adam/create_adsl.R > question_2_adam/create_adsl.log 2>&1
 testthat::test_dir("question_2_adam/tests/testthat")
 ```
 
-All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 22 ]`). The
+All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 23 ]`). The
 reference check against `pharmaverseadam::adsl` is skipped if
 {pharmaverseadam} is not installed.
 
@@ -77,7 +77,7 @@ reference check against `pharmaverseadam::adsl` is skipped if
 |---|---|---|
 | `AGEGR9`, `AGEGR9N` | `"<18"` = 1, `"18 - 50"` = 2 (18 and 50 inclusive), `">50"` = 3; `"Missing"` = 4 if AGE is missing | `derive_vars_cat()` |
 | `TRTSDTM`, `TRTSTMF` | First EX record (by start datetime, then EXSEQ) with a **valid dose** and a complete start date. Missing hours/minutes/seconds imputed with 00; flag not set if only seconds are missing | `derive_vars_dtm()` (`highest_imputation = "h"`, `time_imputation = "first"`, `ignore_seconds_flag = TRUE`), `derive_vars_merged()` |
-| `ITTFL` | `"Y"` if `DM.ARM` is not missing, else `"N"` | `derive_var_merged_exist_flag()` |
+| `ITTFL` | `"Y"` if the subject was randomized, i.e. `DM.ARM` is not missing and not `"Screen Failure"`, else `"N"` | `derive_var_merged_exist_flag()` |
 | `LSTAVLDT` | Latest of: last complete VS date with a valid result, last complete AE start date, last complete DS start date, last valid-dose date (date part of `TRTEDTM`) | `derive_vars_extreme_event()`, `convert_dtc_to_dt()` |
 | Supporting: `TRTEDTM`, `TRTETMF` | Last EX record with a valid dose and a complete end date (missing time imputed with 23:59:59) and its time imputation flag. TRTEDTM is referenced as ADSL.TRTEDTM in the LSTAVLDT specification | `derive_vars_merged()` |
 | Supporting: `TRTSDT`, `TRTEDT` | Date parts of TRTSDTM and TRTEDTM; TRTEDT is the last valid-dose date used for LSTAVLDT | `derive_vars_dtm_to_dt()` |
@@ -86,12 +86,13 @@ reference check against `pharmaverseadam::adsl` is skipped if
 
 ## Assumptions and observations
 
-1. **ITTFL** is implemented exactly as specified (`ARM` not missing). In
-   `pharmaversesdtm::dm`, `ARM` is populated for all 306 subjects, including
-   the 52 screen failures (`ARM = "Screen Failure"`), so `ITTFL = "Y"` for
-   everyone. If screen failures should be excluded from the ITT population,
-   the condition would change to
-   `!is.na(ARM) & ARM != "Screen Failure"`; this would need to be confirmed.
+1. **ITTFL** flags randomized subjects, as specified. The specification
+   identifies them by a non-missing `DM.ARM`, but in `pharmaversesdtm::dm`
+   `ARM` is also populated for the 52 screen failures
+   (`ARM = "Screen Failure"`), who were not randomized. They are therefore
+   excluded explicitly: `ITTFL = "Y"` for 254 subjects, `"N"` for 52. These
+   are exactly the subjects with a `"RANDOMIZED"` record in DS, which the
+   tests use as an independent check.
 2. **"Complete" dates** for LSTAVLDT: partial dates (e.g. `"2013-05"`) are not
    imputed but excluded, as the specification requires complete dates
    (26 AE start dates are partial).
@@ -115,7 +116,7 @@ reference check against `pharmaverseadam::adsl` is skipped if
 
 ## Tests
 
-`tests/testthat/test-adsl.R` contains 12 tests (22 expectations):
+`tests/testthat/test-adsl.R` contains 12 tests (23 expectations):
 
 - **Unit tests** of the derivation rules on dummy data, including boundary
   values (ages 17, 18, 50, 51, missing), the valid-dose definition and the
@@ -123,6 +124,8 @@ reference check against `pharmaverseadam::adsl` is skipped if
 - **Independent QC:** `AGEGR9/N`, `TRTSDTM/TRTSTMF`,
   `ITTFL` and `LSTAVLDT` are re-derived from SDTM with plain
   dplyr/lubridate (no {admiral}) and compared with the production ADSL.
+  ITTFL is checked against a different source than the program uses: the
+  subjects with a `"RANDOMIZED"` record in DS.
 - **Structure:** one record per DM subject, all requested variables present,
   correct types.
 - **Reference check:** `TRTSDTM`/`TRTEDTM` agree with `pharmaverseadam::adsl`

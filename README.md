@@ -25,24 +25,32 @@ Each folder contains:
 
 ```
 .
+├── README.md                        # this overview
+├── renv.lock                        # package versions used (renv::restore())
+├── .Rprofile                        # activates renv when R starts here
+├── renv/                            # renv infrastructure (activate.R, settings)
 ├── question_1_sdtm/
+│   ├── README.md                    # mapping, assumptions, how to run
 │   ├── 01_create_ds_domain.R        # DS domain program
 │   ├── 01_create_ds_domain.log      # logrx log
 │   ├── metadata/sdtm_ct.csv         # study controlled terminology
 │   ├── output/                      # ds.rds, ds.csv
 │   └── tests/testthat/test-ds.R
 ├── question_2_adam/
+│   ├── README.md                    # derivations, assumptions, how to run
 │   ├── create_adsl.R                # ADSL program
 │   ├── create_adsl.log              # logrx log
 │   ├── specs/adsl_specs.R           # derivation rules shared with the tests
 │   ├── output/                      # adsl.rds, adsl.csv
 │   └── tests/testthat/test-adsl.R
 └── question_3_tlg/
+    ├── README.md                    # table/plot derivations, assumptions, how to run
     ├── 01_create_ae_summary_table.R # TEAE summary table
     ├── 02_create_visualizations.R   # AE plots
     ├── *.log                        # logrx logs
+    ├── dependencies.R               # library(logrx), so renv records {logrx}
     ├── R/tlg_functions.R            # helper functions shared with the tests
-    ├── output/                      # table (HTML/DOCX), plots (PNG), plot data
+    ├── output/                      # table (HTML/DOCX/RDS), plots (PNG), plot data (CSV)
     └── tests/testthat/test-tlg.R
 ```
 
@@ -84,8 +92,8 @@ Each folder contains:
 | Question | Result | Tests |
 |---|---|---|
 | 1 – DS | 850 records, 306 subjects; identical to `pharmaversesdtm::ds` | 24 passed |
-| 2 – ADSL | 306 subjects with AGEGR9/AGEGR9N, TRTSDTM/TRTSTMF, ITTFL, LSTAVLDT | 22 passed |
-| 3 – TLG | TEAE table (FDA Table 10 layout), severity bar chart, top-10 AE plot with 95% Clopper-Pearson CIs | 41 passed |
+| 2 – ADSL | 306 subjects with AGEGR9/AGEGR9N, TRTSDTM/TRTSTMF, ITTFL (254 randomized), LSTAVLDT | 23 passed |
+| 3 – TLG | TEAE table (FDA Table 10 layout), severity bar chart, top-10 AE plot with 95% Clopper-Pearson CIs | 49 passed |
 
 Assumptions and data observations are documented in each folder's README.
 

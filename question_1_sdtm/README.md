@@ -9,7 +9,8 @@ Creates the SDTM **DS (Disposition)** domain from the raw eCRF data
 | File | Content |
 |---|---|
 | `01_create_ds_domain.R` | DS program (deliverable) |
-| `metadata/sdtm_ct.csv` | Study controlled terminology (from https://github.com/pharmaverse/examples/blob/main/metadata/sdtm_ct.csv) |
+| `metadata/sdtm_ct.csv` | Study controlled terminology (downloaded from GitHub link provided in the video assessment: 
+https://github.com/pharmaverse/examples/blob/main/metadata/sdtm_ct.csv) |
 | `01_create_ds_domain.log` | {logrx} log – evidence that the program runs without errors or warnings |
 | `output/ds.rds`, `output/ds.csv` | Resulting DS domain (850 records, 306 subjects, 12 variables) |
 | `tests/testthat/test-ds.R` | Structure checks, independent QC of the aCRF rules and comparison with the reference DS domain |
@@ -18,10 +19,10 @@ Creates the SDTM **DS (Disposition)** domain from the raw eCRF data
 
 Install the packages once:
 
-Recommended: run 
+Recommended: run
 
 ```r
-renv::restore() 
+renv::restore()
 ```
 
 from the repository root (see main README).
@@ -100,12 +101,12 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 24 ]`).
    the CT value "Ambul ECG Removal") and the unscheduled visits
    ("Unscheduled x.y") are not in the study CT. VISITNUM is derived by a
    documented fallback (case-insensitive CT lookup; x.y from the visit name)
-   and listed in the log. Other option would be to added them to the 
-   study CT instead.
-4. **DSSTDY** uses `RFXSTDTC`, as in the pharmaverse examples; it is
-   identical to `RFSTDTC` for all subjects in this study.
-5. **Validation:** the output is identical to `pharmaversesdtm::ds` (the
-   reference DS domain created from the same raw data) for all 12 variables.
+   and listed in the log. Alternatively, they could be added to the study CT.
+4. **DSSTDY** uses `RFXSTDTC`, as in the pharmaverse examples; it has
+   identical values to `RFSTDTC` for all subjects in this study.
+5. **Validation:** the output has identical values to `pharmaversesdtm::ds` 
+   (the reference DS domain created from the same raw data) for all 
+   12 variables.
 
 ## Tests
 

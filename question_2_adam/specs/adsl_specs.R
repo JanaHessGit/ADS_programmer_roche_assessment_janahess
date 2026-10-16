@@ -21,7 +21,7 @@ agegr9_lookup <- admiral::exprs(
   ~condition,            ~AGEGR9,   ~AGEGR9N,
   is.na(AGE),            "Missing", 4,
   AGE < 18,              "<18",     1,
-  between(AGE, 18, 50),  "18 - 50", 2,
+  dplyr::between(AGE, 18, 50),  "18 - 50", 2,
   AGE > 50,              ">50",     3
 )
 

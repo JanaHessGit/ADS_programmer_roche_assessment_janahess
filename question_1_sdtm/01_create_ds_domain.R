@@ -53,7 +53,9 @@ dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 ds_raw <- pharmaverseraw::ds_raw
 dm <- pharmaversesdtm::dm
 
-# Study controlled terminology (same file as in pharmaverse/examples) downloaded from GitHub link provided in the video assessment.
+# Study controlled terminology downloaded from GitHub link provided
+# in the video assessment 
+# (https://github.com/pharmaverse/examples/blob/main/metadata/sdtm_ct.csv).
 study_ct <- read.csv(file.path(prog_dir, "metadata", "sdtm_ct.csv"), stringsAsFactors = FALSE)
 
 message(
@@ -265,7 +267,7 @@ if (nrow(visit_fallback) > 0) {
 # 5. Derive DSSEQ and DSSTDY
 # -----------------------------------------------------------------------------
 ds <- ds %>%
-  # SUnique sequence number per subject, in chronological order of the event
+  # Unique sequence number per subject, in chronological order of the event
   # (events on the same day keep the order in which they were collected).
   derive_seq(
     tgt_var  = "DSSEQ",

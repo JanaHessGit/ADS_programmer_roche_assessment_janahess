@@ -203,15 +203,22 @@ test_that("Subjects without a valid dose have missing TRTSDTM", {
   expect_true(all(is.na(not_dosed$TRTSTMF)))
 })
 
-test_that("ITTFL is Y if DM.ARM is not missing, else N", {
+test_that("ITTFL is Y for randomized subjects, N for screen failures", {
+  # Independent source: randomized subjects have a "RANDOMIZED" protocol
+  # milestone record in DS (the program uses DM.ARM instead)
+  randomized <- ds %>%
+    filter(DSDECOD == "RANDOMIZED") %>%
+    distinct(USUBJID) %>%
+    pull(USUBJID)
   qc <- dm %>%
-    transmute(USUBJID, ITTFL = if_else(!is.na(ARM), "Y", "N"))
+    transmute(USUBJID, ITTFL = if_else(USUBJID %in% randomized, "Y", "N"))
   prod <- adsl %>% select(USUBJID, ITTFL)
 
   expect_equal(
     arrange(prod, USUBJID), arrange(qc, USUBJID),
     ignore_attr = TRUE
   )
+  expect_true(all(adsl$ITTFL[adsl$ARM == "Screen Failure"] == "N"))
 })
 
 test_that("LSTAVLDT matches an independent derivation from VS, AE, DS, EX", {

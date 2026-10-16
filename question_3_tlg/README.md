@@ -10,7 +10,8 @@ Creates a summary table of treatment-emergent adverse events with
 |---|---|
 | `01_create_ae_summary_table.R` | TEAE summary table (deliverable) |
 | `02_create_visualizations.R` | Severity bar chart and top-10 AE plot (deliverable) |
-| `R/tlg_functions.R` | Helper functions used by `02_create_visualizations.R` and the tests: `count_ae_by_severity()`, `top_ae_incidence()` |
+| `R/tlg_functions.R` | Helper functions used by `02_create_visualizations.R` and the tests: `get_severity_levels()` (severity order from ASEVN), `count_ae_by_severity()`, `top_ae_incidence()` |
+| `dependencies.R` | Only `library(logrx)`: {logrx} is used to run the programs but not loaded in them, so this file makes `renv::snapshot()` record it in `renv.lock`. Not meant to be run. |
 | `01_create_ae_summary_table.log`, `02_create_visualizations.log` | {logrx} logs – evidence that both programs run without errors or warnings |
 | `output/ae_summary_table.html`, `output/ae_summary_table.docx` | TEAE summary table (HTML; DOCX as editable copy) |
 | `output/ae_severity_by_treatment.png` | Plot 1 – AE severity distribution by treatment |
@@ -22,10 +23,10 @@ Creates a summary table of treatment-emergent adverse events with
 
 Install the packages once:
 
-Recommended: run 
+Recommended: run
 
 ```r
-renv::restore() 
+renv::restore()
 ```
 
 from the repository root (see main README).
@@ -83,8 +84,8 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 49 ]`).
 | Rows: AESOC / AETERM | `tbl_hierarchical(variables = c(AESOC, AETERM))`, plus an overall "Treatment Emergent AEs" row |
 | Columns: ACTARM | `by = ACTARM` |
 | n (%) | Number and percentage of **subjects** (`id = USUBJID`): a subject is counted once per row |
-| Denominator | Safety population in ADSL (`SAFFL == "Y"`),
-| Total column | `add_overall(last = TRUE)`,
+| Denominator | Safety population in ADSL (`SAFFL == "Y"`)|
+| Total column | `add_overall(last = TRUE)`|
 | Sort by descending frequency | `sort_hierarchical()`: SOCs by number of subjects, terms within each SOC |
 
 ### Plot 1 – AE severity distribution by treatment
@@ -112,12 +113,16 @@ confidence intervals (`stats::binom.test()`).
 
 `tests/testthat/test-tlg.R` contains 17 tests (49 expectations):
 
-- **Unit tests** of `count_ae_by_severity()` and `top_ae_incidence()` on
-  dummy data: zero counts, unknown severities, subjects counted once,
-  ties, exact CIs, custom denominator.
+- **Unit tests** of the helper functions on dummy data:
+  `get_severity_levels()` (order taken from ASEVN, not alphabetical; error if
+  AESEV and ASEVN are not one-to-one; expected order for the study data),
+  `count_ae_by_severity()` (zero counts, unobserved levels kept, unknown
+  severities rejected) and `top_ae_incidence()` (subjects counted once, ties,
+  exact CIs, custom denominator).
 - **Independent QC of the table:** column N's, the overall TEAE row and the
   subject counts for every SOC/term and arm (incl. Total) are re-derived with
   plain dplyr; percentages and the descending sort order are checked.
 - **Plot data QC:** severity counts and top-10 incidences/CIs are
   re-derived from ADAE and compared with the saved plot data.
 - **Output files** exist and are not empty.
+Tests were drafted with GitHub Copilot and extended manually.

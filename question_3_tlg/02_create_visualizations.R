@@ -45,7 +45,7 @@ stopifnot(
   "No missing AE term"       = !anyNA(adae$AETERM)
 )
 
-# Common look: light theme, recessive grid, no minor gridlines
+# Common look: position legend
 theme_tlg <-
   theme(
     legend.position = "right"
@@ -78,14 +78,15 @@ write.csv(severity_data, file.path(out_dir, "ae_severity_by_treatment.csv"),
 # -----------------------------------------------------------------------------
 # 3. Plot 2 - Top 10 most frequent AEs with 95% CI
 # -----------------------------------------------------------------------------
-top10 <- top_ae_incidence(adae, n_top = 10, conf_level =0.95)
+top10 <- top_ae_incidence(adae, n_top = 10, conf_level = 0.95)
 n_subjects <- unique(top10$N)
 
 print(top10)
-
 plot_top10 <- top10 %>%
-  # most frequent term at the top
-  mutate(AETERM = reorder(AETERM, pct)) %>%
+  # top10 is already sorted (descending n, ties alphabetical). ggplot draws the
+  # first factor level at the bottom, so the levels are reversed to show the
+  # most frequent term at the top and ties alphabetically from top to bottom.
+  mutate(AETERM = factor(AETERM, levels = rev(AETERM))) %>%
   ggplot(aes(x = pct, y = AETERM)) +
   # horizontal error bars (geom_errorbarh() is deprecated in newer ggplot2)
   geom_errorbar(aes(xmin = ci_low, xmax = ci_high),
@@ -109,7 +110,8 @@ plot_top10 <- top10 %>%
   theme(
     panel.grid.major.x = element_line(),
     panel.grid.major.y = element_blank()
-  )
+  ) +
+  theme_tlg
 
 ggsave(file.path(out_dir, "top10_ae_incidence.png"), plot_top10,
   width = 8, height = 5, dpi = 300, bg = "white"

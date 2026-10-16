@@ -11,7 +11,7 @@ logrx link to repository: https://github.com/pharmaverse/logrx
 User: jana
 File Name: 01_create_ds_domain.R
 File Path: /home/jana/Documents/Projekte/ADS_programmer_roche_assessment_janahess/question_1_sdtm
-File HashSum: a89c095f02a14c9dbdea93750676d2229ae67973
+File HashSum: 2b1da840013fc75c0107d501133bd10caa61dc45
 --------------------------------------------------------------------------------
 -                             Session Information                              -
 --------------------------------------------------------------------------------
@@ -94,6 +94,7 @@ File HashSum: a89c095f02a14c9dbdea93750676d2229ae67973
  P pillar            1.11.1    2025-09-17 [?] CRAN (R 4.6.0)
  P pkgconfig         2.0.3     2019-09-22 [?] CRAN (R 4.6.0)
  P pkgload           1.5.3     2026-06-15 [?] CRAN (R 4.6.0)
+ P praise            1.0.0     2015-08-11 [?] CRAN (R 4.6.0)
  P processx          3.9.0     2026-04-22 [?] CRAN (R 4.6.0)
  P promises          1.5.0     2025-11-01 [?] CRAN (R 4.6.0)
  P proxy             0.4-29    2025-12-29 [?] CRAN (R 4.6.0)
@@ -184,10 +185,6 @@ File HashSum: a89c095f02a14c9dbdea93750676d2229ae67973
 --------------------------------------------------------------------------------
 -                               Masked Functions                               -
 --------------------------------------------------------------------------------
-function `dm` from {package:pharmaversesdtm} by .GlobalEnv
-function `ds` from {package:pharmaversesdtm} by .GlobalEnv
-function `ds_raw` from {package:pharmaverseraw} by .GlobalEnv
-function `labels` from {package:base} by .GlobalEnv
 function `%>%` from {package:gtsummary, package:admiral, package:stringr, package:dplyr} by package:testthat
 function `vars` from {package:gtsummary, package:dplyr} by package:ggplot2
 function `as_label` from {package:dplyr} by package:ggplot2
@@ -242,7 +239,7 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                          Used Package and Functions                          -
 --------------------------------------------------------------------------------
-{.GlobalEnv} as_num_safe
+{!!! NOT FOUND !!!} as_num_safe
 {package:base} library, file.path, dir.create, message, nrow, stopifnot, any, is.na, c, paste0, toupper, as.numeric, rep, length, grepl, as.character, names, attr, duplicated, anyNA, all, %in%, as.Date, substr, warning, paste, print, saveRDS
 {package:dplyr} n_distinct, transmute, filter, distinct, left_join, coalesce, arrange, count, glimpse
 {package:gtsummary} select, all_of, mutate
@@ -253,9 +250,9 @@ function `kronecker` from {package:base} by package:methods
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-16 10:32:10 CEST
-End time: 2026-10-16 10:32:12 CEST
-Run time: 2 seconds
+Start time: 2026-10-16 13:52:33 CEST
+End time: 2026-10-16 13:52:34 CEST
+Run time: 1 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -
 --------------------------------------------------------------------------------

@@ -11,7 +11,7 @@ logrx link to repository: https://github.com/pharmaverse/logrx
 User: jana
 File Name: 02_create_visualizations.R
 File Path: /home/jana/Documents/Projekte/ADS_programmer_roche_assessment_janahess/question_3_tlg
-File HashSum: 21f549be5a3a7201786c0457c9b6e9106d4eed20
+File HashSum: 739502b6ec965375d495fe5513608969b58cc2f7
 --------------------------------------------------------------------------------
 -                             Session Information                              -
 --------------------------------------------------------------------------------
@@ -94,6 +94,7 @@ File HashSum: 21f549be5a3a7201786c0457c9b6e9106d4eed20
  P pillar            1.11.1    2025-09-17 [?] CRAN (R 4.6.0)
  P pkgconfig         2.0.3     2019-09-22 [?] CRAN (R 4.6.0)
  P pkgload           1.5.3     2026-06-15 [?] CRAN (R 4.6.0)
+ P praise            1.0.0     2015-08-11 [?] CRAN (R 4.6.0)
  P processx          3.9.0     2026-04-22 [?] CRAN (R 4.6.0)
  P promises          1.5.0     2025-11-01 [?] CRAN (R 4.6.0)
  P proxy             0.4-29    2025-12-29 [?] CRAN (R 4.6.0)
@@ -239,18 +240,17 @@ function `kronecker` from {package:base} by package:methods
 -                          Used Package and Functions                          -
 --------------------------------------------------------------------------------
 {.GlobalEnv} count_ae_by_severity, top_ae_incidence
-{package:base} library, file.path, dir.create, source, stopifnot, anyNA, print, unique, c, paste0, message
+{package:base} library, file.path, dir.create, source, stopifnot, anyNA, print, unique, factor, rev, c, paste0, message
 {package:ggplot2} theme, ggplot, aes, geom_col, labs, ggsave, geom_errorbar, geom_point, scale_x_continuous, expansion, element_line, element_blank
 {package:gtsummary} mutate
 {package:scales} label_percent
-{package:stats} reorder
 {package:testthat} %>%
 {package:utils} write.csv
 --------------------------------------------------------------------------------
 -                         Program Run Time Information                         -
 --------------------------------------------------------------------------------
-Start time: 2026-10-16 13:04:45 CEST
-End time: 2026-10-16 13:04:46 CEST
+Start time: 2026-10-16 13:54:41 CEST
+End time: 2026-10-16 13:54:42 CEST
 Run time: 1 seconds
 --------------------------------------------------------------------------------
 -                             Errors and Warnings                              -

@@ -20,7 +20,8 @@
 #   TRTSDTM / TRTSTMF Datetime of first exposure with a valid dose and a
 #                     complete date; missing time parts imputed with 00,
 #                     imputation flag not set if only seconds are missing
-#   ITTFL             "Y" if DM.ARM is not missing, else "N"
+#   ITTFL             "Y" if randomized (DM.ARM not missing and not
+#                     "Screen Failure"), else "N"
 #   LSTAVLDT          Last known alive date: max of last complete vital signs
 #                     date with a valid result, last complete AE onset date,
 #                     last complete disposition date and last valid dose date
@@ -41,7 +42,6 @@
 
 library(admiral)
 library(dplyr, warn.conflicts = FALSE)
-library(lubridate, warn.conflicts = FALSE)
 library(stringr)
 
 # All paths are relative to the repository root
@@ -133,20 +133,20 @@ adsl <- adsl %>%
 # -----------------------------------------------------------------------------
 # 5. Population flags
 # -----------------------------------------------------------------------------
-# ITTFL: "Y" if DM.ARM is not missing, else "N" (as specified).
-# Note: in pharmaversesdtm::dm, ARM is populated for all subjects, including
-# screen failures (ARM = "Screen Failure"), so ITTFL = "Y" for all subjects.
-# The specification is implemented as written; see README for details.
+# ITTFL: "Y" if the subject was randomized, else "N". The specification
+# identifies randomized subjects by a non-missing DM.ARM. In pharmaversesdtm::dm
+# ARM is also populated for screen failures (ARM = "Screen Failure"), who were
+# not randomized, so they are excluded explicitly. This gives exactly the 254
+# subjects with a "RANDOMIZED" protocol milestone in DS (checked in the tests).
 adsl <- adsl %>%
   derive_var_merged_exist_flag(
     dataset_add   = dm,
     by_vars       = exprs(STUDYID, USUBJID),
     new_var       = ITTFL,
-    condition     = !is.na(ARM),
+    condition     = !is.na(ARM) & ARM != "Screen Failure",
     false_value   = "N",
     missing_value = "N"
   )
-
 
 # -----------------------------------------------------------------------------
 # 6. LSTAVLDT - last known alive date
@@ -205,8 +205,8 @@ adsl <- adsl %>%
     new_vars = exprs(LSTAVLDT)
   )
 
-# Intermediate variables are kept for 
-# traceability (TRTEDTM, TRTETMF, TRTSDT, TRTEDT)
+# Intermediate variables are kept for traceability (TRTEDTM, 
+# TRTETMF, TRTSDT, TRTEDT)
 
 # -----------------------------------------------------------------------------
 # 7. Variable labels
@@ -234,7 +234,9 @@ stopifnot(
   "All new variables present" = all(names(new_labels) %in% names(adsl)),
   "AGEGR9 only uses defined values" =
     all(adsl$AGEGR9 %in% c("<18", "18 - 50", ">50", "Missing")),
-  "ITTFL is Y or N" = all(adsl$ITTFL %in% c("Y", "N"))
+  "ITTFL is Y or N" = all(adsl$ITTFL %in% c("Y", "N")),
+  "Screen failures are not in the ITT population" =
+    all(adsl$ITTFL[adsl$ARM == "Screen Failure"] == "N")
 )
 
 # Summaries for the log
