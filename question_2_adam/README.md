@@ -18,21 +18,13 @@ with the additional variables requested in the assessment.
 
 ## How to run
 
-Install the packages once:
-
-Recommended: run 
-
-```r
-renv::restore() 
-```
-
-from the repository root (see main README).
+Set up the packages as described in the main README (start R in the repository folder, then renv::restore()). Restart R before running each program.
 
 OR
 
 ```r
-install.packages(c("admiral", "pharmaversesdtm", "pharmaverseadam",
-                   "dplyr", "lubridate", "stringr", "logrx", "testthat"))
+install.packages(c("sdtm.oak", "pharmaverseraw", "pharmaversesdtm",
+                   "dplyr", "stringr", "lubridate", "logrx", "testthat"))
 ```
 
 All commands are run **from the repository root**, i.e. with the repository

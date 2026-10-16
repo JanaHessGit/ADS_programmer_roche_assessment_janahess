@@ -53,7 +53,7 @@ Each folder contains:
     ├── output/                      # table (HTML/DOCX/RDS), plots (PNG), plot data (CSV)
     └── tests/testthat/test-tlg.R
 ```
-````
+
 
 ## How to run
 
@@ -64,33 +64,32 @@ Each folder contains:
 2. Restore the exact package versions used for this submission (recorded in
    `renv.lock`, R 4.6.0; other R versions work but may show a warning):
 
-```r
+   ```r
    renv::restore()
-```
+   ```
 
    Alternative without renv (latest CRAN versions, results may differ):
 
-```r
+   ```r
    install.packages(c(
      "sdtm.oak", "admiral", "pharmaverseraw", "pharmaversesdtm",
      "pharmaverseadam", "gtsummary", "gt", "ggplot2", "dplyr", "tidyr",
      "purrr", "stringr", "lubridate", "scales", "logrx", "testthat"
    ))
-```
+   ```
 
 3. Run each program with a log file in a **fresh R session** (restart R before
    each program, so the log only shows that program's packages), then its
    tests, e.g. for Question 1:
 
-```r
+   ```r
    logrx::axecute("question_1_sdtm/01_create_ds_domain.R",
                   log_name = "01_create_ds_domain.log",
                   log_path = "question_1_sdtm")
    testthat::test_dir("question_1_sdtm/tests/testthat")
-```
+   ```
 
    The exact commands for every program are in the README of each folder.
-````
 
 ## Results at a glance
 

@@ -16,15 +16,7 @@ Creates the SDTM **DS (Disposition)** domain from the raw eCRF data
 
 ## How to run
 
-Install the packages once:
-
-Recommended: run
-
-```r
-renv::restore()
-```
-
-from the repository root (see main README).
+Set up the packages as described in the main README (start R in the repository folder, then renv::restore()). Restart R before running each program.
 
 OR
 
