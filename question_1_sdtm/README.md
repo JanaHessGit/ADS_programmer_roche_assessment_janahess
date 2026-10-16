@@ -94,13 +94,14 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 24 ]`).
    in the study CT differ in wording or case. The upper-cased values equal
    the C66727 submission values (checked by the program and a test).
    "Randomized" is a protocol milestone (CDISC codelist PROTMLST), which is
-   not part of C66727.
+   not part of C66727 and PROTMLST is not contained in the provided 
+   sdtm_ct.
 3. **VISITNUM outside the study CT:** "Ambul Ecg Removal" (case differs from
    the CT value "Ambul ECG Removal") and the unscheduled visits
    ("Unscheduled x.y") are not in the study CT. VISITNUM is derived by a
    documented fallback (case-insensitive CT lookup; x.y from the visit name)
-   and listed in the log. In a production study these visits should be added
-   to the study CT instead.
+   and listed in the log. Other option would be to added them to the 
+   study CT instead.
 4. **DSSTDY** uses `RFXSTDTC`, as in the pharmaverse examples; it is
    identical to `RFSTDTC` for all subjects in this study.
 5. **Validation:** the output is identical to `pharmaversesdtm::ds` (the
@@ -113,9 +114,9 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 24 ]`).
 - **Structure:** variable order, record count, unique key, required
   variables, valid DSCAT/VISITNUM values, DSDECOD in C66727, ISO 8601 format
   with valid calendar dates.
-- **Independent QC (double programming):** DSTERM, DSDECOD, DSCAT, DSDTC,
-  DSSTDTC and VISIT are re-derived from `ds_raw` with plain dplyr/lubridate;
+- **Independent QC:** DSTERM, DSDECOD, DSCAT, DSDTC, DSSTDTC and VISIT 
+  are re-derived from `ds_raw` with plain dplyr/lubridate;
   DSSTDY is recalculated from DM; DSSEQ is checked for chronological order.
 - **Reference:** the output is compared with `pharmaversesdtm::ds`.
 
-Tests were drafted with GitHub Copilot and reviewed and extended manually.
+  Tests were drafted with GitHub Copilot and extended manually.
