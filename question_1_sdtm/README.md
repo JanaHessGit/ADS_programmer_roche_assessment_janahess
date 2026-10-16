@@ -25,7 +25,6 @@ install.packages(c("sdtm.oak", "pharmaverseraw", "pharmaversesdtm",
                    "dplyr", "stringr", "lubridate", "logrx", "testthat"))
 ```
 
-
 All commands are run **from the repository root**, i.e. with the repository
 folder as working directory (see main README).
 
