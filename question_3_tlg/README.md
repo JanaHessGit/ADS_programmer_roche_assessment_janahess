@@ -71,7 +71,7 @@ Rscript question_3_tlg/02_create_visualizations.R > question_3_tlg/02_create_vis
 testthat::test_dir("question_3_tlg/tests/testthat")
 ```
 
-All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 41 ]`).
+All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 49 ]`).
 
 ## Outputs and derivations
 
@@ -111,7 +111,7 @@ confidence intervals (`stats::binom.test()`).
 
 ## Tests
 
-`tests/testthat/test-tlg.R` contains 13 tests (41 expectations):
+`tests/testthat/test-tlg.R` contains 17 tests (49 expectations):
 
 - **Unit tests** of `count_ae_by_severity()` and `top_ae_incidence()` on
   dummy data: zero counts, unknown severities, subjects counted once,

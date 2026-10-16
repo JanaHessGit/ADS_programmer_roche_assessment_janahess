@@ -37,15 +37,21 @@ dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 # -----------------------------------------------------------------------------
 # 1. Input data
 # -----------------------------------------------------------------------------
+# Treatment-emergent AEs of safety-population subjects
+adae <- pharmaverseadam::adae %>%
+  filter(TRTEMFL == "Y", SAFFL == "Y")
+
 # Denominator: safety population (subjects who received study treatment)
 adsl <- pharmaverseadam::adsl %>%
   filter(SAFFL == "Y") %>%
   select(USUBJID, ACTARM)
 
-# Treatment-emergent AEs of safety-population subjects
-adae <- pharmaverseadam::adae %>%
-  filter(TRTEMFL == "Y", USUBJID %in% adsl$USUBJID)
-
+# ADAE.SAFFL is taken from ADSL: every TEAE subject must therefore be part of
+# the ADSL safety population (not every safety subject has a TEAE)
+stopifnot(
+  "TEAE subjects are in the ADSL safety population" =
+    all(adae$USUBJID %in% adsl$USUBJID)
+)
 
 message(
   "Safety population: ", nrow(adsl), " subjects; TEAE records: ",
@@ -73,8 +79,7 @@ ae_table <- adae %>%
   modify_caption("**Treatment-Emergent Adverse Events by System Organ Class
                  and Reported Term (Safety Population)**") %>%
   modify_footnote_header(
-    footnote = "n (%) = number (percentage) of subjects with at least one
-                event; a subject is counted once per row.",
+    footnote = "n (%)",
     columns = all_stat_cols()
   )
 

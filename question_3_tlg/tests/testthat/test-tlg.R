@@ -36,10 +36,39 @@ parse_n <- function(x) as.integer(sub("\\s*\\(.*$", "", x))
 # =============================================================================
 # 1. Unit tests of the helper functions
 # =============================================================================
+test_that("get_severity_levels orders by ASEVN, not alphabetically", {
+  # rows deliberately unsorted; alphabetical order would put
+  # LIFE THREATENING before MILD
+  dummy <- tibble(
+    AESEV = c("SEVERE", "MILD", "LIFE THREATENING", "MODERATE", "MILD", NA),
+    ASEVN = c(3, 1, 4, 2, 1, NA)
+  )
+  expect_identical(
+    get_severity_levels(dummy),
+    c("MILD", "MODERATE", "SEVERE", "LIFE THREATENING")
+  )
+})
+
+test_that("get_severity_levels stops if AESEV and ASEVN are inconsistent", {
+  # same text with two codes
+  dummy1 <- tibble(AESEV = c("MILD", "MILD"), ASEVN = c(1, 2))
+  expect_error(get_severity_levels(dummy1), "one-to-one")
+  # two texts with the same code
+  dummy2 <- tibble(AESEV = c("MILD", "MODERATE"), ASEVN = c(1, 1))
+  expect_error(get_severity_levels(dummy2), "one-to-one")
+  # ASEVN missing from the data
+  expect_error(get_severity_levels(tibble(AESEV = "MILD")))
+})
+
+test_that("get_severity_levels gives the expected order for the study data", {
+  expect_identical(get_severity_levels(adae), c("MILD", "MODERATE", "SEVERE"))
+})
+
 test_that("count_ae_by_severity counts records and fills missing combos", {
   dummy <- tibble(
     ACTARM = c("A", "A", "A", "B"),
-    AESEV  = c("MILD", "MILD", "SEVERE", "MODERATE")
+    AESEV  = c("MILD", "MILD", "SEVERE", "MODERATE"),
+    ASEVN  = c(1, 1, 3, 2)
   )
   out <- count_ae_by_severity(dummy)
 
@@ -50,9 +79,25 @@ test_that("count_ae_by_severity counts records and fills missing combos", {
   expect_identical(levels(out$AESEV), c("MILD", "MODERATE", "SEVERE"))
 })
 
-test_that("count_ae_by_severity rejects unknown severity values", {
+test_that("count_ae_by_severity keeps unobserved levels if given explicitly", {
+  # no MODERATE record in the data, but MODERATE is a protocol grade
+  dummy <- tibble(ACTARM = c("A", "B"), AESEV = c("MILD", "SEVERE"))
+  out <- count_ae_by_severity(
+    dummy,
+    severity_levels = c("MILD", "MODERATE", "SEVERE")
+  )
+
+  expect_identical(levels(out$AESEV), c("MILD", "MODERATE", "SEVERE"))
+  expect_equal(nrow(out), 6)
+  expect_equal(sum(out$n[out$AESEV == "MODERATE"]), 0)
+})
+
+test_that("count_ae_by_severity rejects values outside the given levels", {
   dummy <- tibble(ACTARM = "A", AESEV = "LIFE THREATENING")
-  expect_error(count_ae_by_severity(dummy))
+  expect_error(
+    count_ae_by_severity(dummy,
+                         severity_levels = c("MILD", "MODERATE", "SEVERE"))
+  )
 })
 
 test_that("top_ae_incidence counts subjects once and gives exact CIs", {

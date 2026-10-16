@@ -1,21 +1,30 @@
 # =============================================================================
 # Program : R/tlg_functions.R
 # Purpose : Helper functions shared by the TLG programs
-#           (01_create_ae_summary_table.R, 02_create_visualizations.R) and the
+#           (02_create_visualizations.R) and the
 #           tests (tests/testthat/test-tlg.R). Keeping the calculations in
 #           functions makes them testable on small dummy data.
 # =============================================================================
 
-#' Severity levels in their natural (ordinal) order
-severity_levels <- c("MILD", "MODERATE", "SEVERE")
-
-#' Number of AE records by treatment arm and severity
+#' Severity levels in their natural order, derived from the data
 #'
-#' @param adae ADAE dataset with ACTARM and AESEV.
-#' @return Tibble with ACTARM, AESEV (factor, ordered MILD < MODERATE < SEVERE)
-#'   and n (number of AE records). Arm/severity combinations without records
-#'   are included with n = 0.
-count_ae_by_severity <- function(adae) {
+#' Orders the distinct values of AESEV by their numeric code ASEVN
+#' (1 = MILD, 2 = MODERATE, 3 = SEVERE in this study).
+get_severity_levels <- function(adae) {
+  stopifnot(all(c("AESEV", "ASEVN") %in% names(adae)))
+  lvls <- adae |>
+    dplyr::filter(!is.na(.data$AESEV)) |>
+    dplyr::distinct(.data$AESEV, .data$ASEVN) |>
+    dplyr::arrange(.data$ASEVN)
+  # each severity text must have exactly one numeric code and vice versa
+  if (anyDuplicated(lvls$AESEV) || anyDuplicated(lvls$ASEVN)) {
+    stop("AESEV and ASEVN are not a one-to-one mapping")
+  }
+  as.character(lvls$AESEV)
+}
+
+count_ae_by_severity <- function(adae,
+                                 severity_levels = get_severity_levels(adae)) {
   stopifnot(all(c("ACTARM", "AESEV") %in% names(adae)))
   stopifnot(all(adae$AESEV %in% c(severity_levels, NA)))
 
@@ -31,6 +40,7 @@ count_ae_by_severity <- function(adae) {
     dplyr::mutate(ACTARM = as.character(.data$ACTARM))
 }
 
+
 #' Top AE terms by subject incidence, with exact 95% confidence intervals
 #'
 #' Incidence = number of subjects with at least one record of the term divided
@@ -39,11 +49,12 @@ count_ae_by_severity <- function(adae) {
 #'
 #' @param adae ADAE dataset with USUBJID and AETERM.
 #' @param n_top Number of terms to return.
+#' @param conf_level Confidence level for Clopper-Pearson 95% CI
 #' @param denominator Number of subjects used as denominator. Default: all
 #'   subjects in `adae` (as in the assessment's sample output).
 #' @return Tibble with AETERM, n, N, pct, ci_low, ci_high (proportions 0-1),
 #'   sorted by descending n (ties sorted alphabetically).
-top_ae_incidence <- function(adae, n_top = 10,
+top_ae_incidence <- function(adae, n_top = 10, conf_level = 0.95,
                              denominator = dplyr::n_distinct(adae$USUBJID)) {
   stopifnot(all(c("USUBJID", "AETERM") %in% names(adae)))
   stopifnot(denominator >= dplyr::n_distinct(adae$USUBJID))
@@ -58,11 +69,11 @@ top_ae_incidence <- function(adae, n_top = 10,
     dplyr::mutate(
       N = denominator,
       pct = .data$n / .data$N,
-      # exact (Clopper-Pearson) 95% CI; binom.test() takes one count at a
+      # exact (Clopper-Pearson) CI; binom.test() takes one count at a
       # time, so it is run once per term and returns c(lower, upper)
       ci = purrr::map2(
         .data$n, .data$N,
-        \(k, total) stats::binom.test(k, total)$conf.int
+        \(k, total) stats::binom.test(k, total,, conf.level = conf_level)$conf.int
       ),
       ci_low = purrr::map_dbl(.data$ci, 1),
       ci_high = purrr::map_dbl(.data$ci, 2)

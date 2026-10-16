@@ -46,12 +46,8 @@ stopifnot(
 )
 
 # Common look: light theme, recessive grid, no minor gridlines
-theme_tlg <- theme_minimal(base_size = 11) +
+theme_tlg <-
   theme(
-    panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank(),
-    plot.title = element_text(face = "bold"),
-    plot.title.position = "plot",
     legend.position = "right"
   )
 
@@ -82,7 +78,7 @@ write.csv(severity_data, file.path(out_dir, "ae_severity_by_treatment.csv"),
 # -----------------------------------------------------------------------------
 # 3. Plot 2 - Top 10 most frequent AEs with 95% CI
 # -----------------------------------------------------------------------------
-top10 <- top_ae_incidence(adae, n_top = 10)
+top10 <- top_ae_incidence(adae, n_top = 10, conf_level =0.95)
 n_subjects <- unique(top10$N)
 
 print(top10)
