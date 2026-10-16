@@ -53,30 +53,22 @@ Each folder contains:
     ├── output/                      # table (HTML/DOCX/RDS), plots (PNG), plot data (CSV)
     └── tests/testthat/test-tlg.R
 ```
-
 ## How to run
 
-1. Clone the repository and open it in RStudio (or set the repository folder
-   as working directory). **All paths are relative to the repository root.**
-2. Install the packages (once):
+1. Clone the repository and start R **in the repository folder**,e.g. run `R` in a
+   terminal in that folder. The `.Rprofile` then activates {renv}
+   automatically. (If you only use `setwd()`, run `renv::load()` afterwards,
+   otherwise your own package library is used.)
+2. Restore the exact package versions used for this submission (recorded in
+   `renv.lock`, R 4.6.0; other R versions work but may show a warning):
 
-   ```r
-   install.packages(c(
-     "sdtm.oak", "admiral", "pharmaverseraw", "pharmaversesdtm",
-     "pharmaverseadam", "gtsummary", "gt", "ggplot2", "dplyr", "tidyr",
-     "purrr", "stringr", "lubridate", "scales", "logrx", "testthat"
-   ))
-   ```
-   OR
-   
-   Restore the package versions used for this submission (recorded in
-   `renv.lock`, R 4.6.0):
-   ```r
+```r
    renv::restore()
-   ```
-   
-3. Run each program with a log file, then its tests, e.g. for Question 1:
+```
 
+   Alternative without renv (latest CRAN versions, results may differ):
+   `install.packages(c("sdtm.oak", "admiral", ...))`
+3. Run each program with a log file, then its tests, e.g. for Question 1: ...
    ```r
    logrx::axecute("question_1_sdtm/01_create_ds_domain.R",
                   log_name = "01_create_ds_domain.log",

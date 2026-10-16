@@ -134,5 +134,5 @@ reference check against `pharmaverseadam::adsl` is skipped if
 - **Reference check:** `TRTSDTM`/`TRTEDTM` agree with `pharmaverseadam::adsl`
   (skipped if {pharmaverseadam} is not installed).
 
-Tests were drafted with GitHub Copilot and extended manually.
+Tests were drafted with GitHub Copilot, Claude and extended manually.
 

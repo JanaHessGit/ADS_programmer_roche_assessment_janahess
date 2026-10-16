@@ -126,4 +126,4 @@ confidence intervals (`stats::binom.test()`).
   re-derived from ADAE and compared with the saved plot data.
 - **Output files** exist and are not empty.
 
-Tests were drafted with GitHub Copilot and extended manually.
+Tests were drafted with GitHub Copilot, Claude and extended manually.
