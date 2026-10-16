@@ -102,8 +102,8 @@ confidence intervals (`stats::binom.test()`).
 
 1. **Plots use all ADAE records** (not only TEAEs) and Plot 2 uses all
    **225 subjects in ADAE** as denominator, to match the sample output in the
-   assessment (e.g. Pruritus 57/225 = 25.3%). Other option would be to use 
-   the safety population (N = 254) as denominator;
+   assessment (e.g. Pruritus 57/225 = 25.3%). Alternatively, the safety 
+   population (N = 254) could be used as denominator;
    `top_ae_incidence()` has a `denominator` argument for this.
 2. **Table denominator:** the safety population (`SAFFL == "Y"`), which gives
    exactly the column N's of the sample output (86 / 72 / 96).
@@ -125,4 +125,5 @@ confidence intervals (`stats::binom.test()`).
 - **Plot data QC:** severity counts and top-10 incidences/CIs are
   re-derived from ADAE and compared with the saved plot data.
 - **Output files** exist and are not empty.
+
 Tests were drafted with GitHub Copilot and extended manually.

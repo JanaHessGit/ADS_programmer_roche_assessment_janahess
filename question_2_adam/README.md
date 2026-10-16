@@ -97,9 +97,12 @@ reference check against `pharmaverseadam::adsl` is skipped if
    imputed but excluded, as the specification requires complete dates
    (26 AE start dates are partial).
 3. **ignore_seconds_flag:** {admiral} only allows this option when seconds are
-   never collected. EX in this study contains dates only, so all `TRTSTMF`
-   are `"H"`. If seconds were ever collected, the program would stop with an
-   error rather than produce an inconsistent flag (covered by a test).
+   never collected. EX in this study contains dates only (no times), so the
+   whole time is imputed (00:00:00) and `TRTSTMF = "H"` for all 254 subjects
+   with a valid dose. The 52 screen failures have no exposure, so `TRTSDTM`
+   and `TRTSTMF` are missing for them. If seconds were ever collected, the
+   program would stop with an error rather than produce an inconsistent flag
+   (covered by a test).
 4. **TRTEDTM** missing times are imputed with 23:59:59, as in the Pharmaverse
    example; only its date part is used for LSTAVLDT.
 5. **AGEGR9:** all subjects in this study are 50 or older, so only `"18 - 50"`

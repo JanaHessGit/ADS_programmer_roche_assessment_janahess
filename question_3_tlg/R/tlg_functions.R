@@ -68,10 +68,7 @@ get_severity_levels <- function(adae) {
 #'   missing from `adae`, or if `AESEV` contains a value that is not in
 #'   `severity_levels` (it would otherwise silently become `NA`).
 #'
-#' @examples
-#' count_ae_by_severity(pharmaverseadam::adae)
 #'
-#' # explicit levels, e.g. to show a severity without records
 count_ae_by_severity <- function(adae,
                                  severity_levels = get_severity_levels(adae)) {
   stopifnot(all(c("ACTARM", "AESEV") %in% names(adae)))

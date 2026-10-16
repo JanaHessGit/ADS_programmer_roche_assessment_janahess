@@ -45,11 +45,6 @@ stopifnot(
   "No missing AE term"       = !anyNA(adae$AETERM)
 )
 
-# Common look: position legend
-theme_tlg <-
-  theme(
-    legend.position = "right"
-  )
 
 # -----------------------------------------------------------------------------
 # 2. Plot 1 - AE severity distribution by treatment
@@ -65,8 +60,7 @@ plot_severity <- ggplot(severity_data, aes(x = ACTARM, y = n, fill = AESEV)) +
     x = "Treatment Arm",
     y = "Count of AEs",
     fill = "Severity/Intensity"
-  ) +
-  theme_tlg
+  )
 
 ggsave(file.path(out_dir, "ae_severity_by_treatment.png"), plot_severity,
   width = 8, height = 5, dpi = 300, bg = "white"
@@ -110,9 +104,8 @@ plot_top10 <- top10 %>%
   theme(
     panel.grid.major.x = element_line(),
     panel.grid.major.y = element_blank()
-  ) +
-  theme_tlg
-
+  ) 
+  
 ggsave(file.path(out_dir, "top10_ae_incidence.png"), plot_top10,
   width = 8, height = 5, dpi = 300, bg = "white"
 )
