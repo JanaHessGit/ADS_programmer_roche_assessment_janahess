@@ -25,35 +25,35 @@ Each folder contains:
 
 ```
 .
-├── README.md                        # this overview
-├── renv.lock                        # package versions used (renv::restore())
-├── .Rprofile                        # activates renv when R starts here
-├── renv/                            # renv infrastructure (activate.R, settings)
+├── README.md                                          # this overview
+├── renv.lock                                          # package versions used (renv::restore())
+├── .Rprofile                                          # activates renv when R starts here
+├── renv/                                              # renv infrastructure (activate.R, settings)
+├── JanaHess_ScreenRecording_ExplainWork_2Minutes.mov  # screen-recorded walkthrough of the repository
 ├── question_1_sdtm/
-│   ├── README.md                    # mapping, assumptions, how to run
-│   ├── 01_create_ds_domain.R        # DS domain program
-│   ├── 01_create_ds_domain.log      # logrx log
-│   ├── metadata/sdtm_ct.csv         # study controlled terminology
-│   ├── output/                      # ds.rds, ds.csv
-│   └── tests/testthat/test-ds.R
+│   ├── README.md                                      # mapping, assumptions, how to run
+│   ├── 01_create_ds_domain.R                          # DS domain program
+│   ├── 01_create_ds_domain.log                        # logrx log
+│   ├── metadata/sdtm_ct.csv                           # study controlled terminology
+│   ├── output/                                        # ds.rds, ds.csv
+│   └── tests/testthat/test-ds.R                       # tests
 ├── question_2_adam/
-│   ├── README.md                    # derivations, assumptions, how to run
-│   ├── create_adsl.R                # ADSL program
-│   ├── create_adsl.log              # logrx log
-│   ├── specs/adsl_specs.R           # derivation rules shared with the tests
-│   ├── output/                      # adsl.rds, adsl.csv
-│   └── tests/testthat/test-adsl.R
+│   ├── README.md                                      # derivations, assumptions, how to run
+│   ├── create_adsl.R                                  # ADSL program
+│   ├── create_adsl.log                                # logrx log
+│   ├── specs/adsl_specs.R                             # derivation rules shared with the tests
+│   ├── output/                                        # adsl.rds, adsl.csv
+│   └── tests/testthat/test-adsl.R                     # tests
 └── question_3_tlg/
-    ├── README.md                    # table/plot derivations, assumptions, how to run
-    ├── 01_create_ae_summary_table.R # TEAE summary table
-    ├── 02_create_visualizations.R   # AE plots
-    ├── *.log                        # logrx logs
-    ├── dependencies.R               # library(logrx), so renv records {logrx}
-    ├── R/tlg_functions.R            # helper functions shared with the tests
-    ├── output/                      # table (HTML/DOCX/RDS), plots (PNG), plot data (CSV)
-    └── tests/testthat/test-tlg.R
+    ├── README.md                                      # table/plot derivations, assumptions, how to run
+    ├── 01_create_ae_summary_table.R                   # TEAE summary table
+    ├── 02_create_visualizations.R                     # AE plots
+    ├── *.log                                          # logrx logs
+    ├── dependencies.R                                 # library(logrx), so renv records {logrx}
+    ├── R/tlg_functions.R                              # helper functions shared with the tests
+    ├── output/                                        # table (HTML/DOCX/RDS), plots (PNG), plot data (CSV)
+    └── tests/testthat/test-tlg.R                      # tests
 ```
-
 
 ## How to run
 
@@ -105,6 +105,12 @@ Assumptions and data observations are documented in each folder's README.
 
 Run with R 4.6.0. The exact R and package versions of each run are recorded
 in the session information of the log files.
+
+## Screen Capture Video
+
+The file JanaHess_ScreenRecording_ExplainWork_2Minutes.mov is a video where 
+I recorded a brief walkthrough of my repository in 2 minutes. I explained my
+approach, design decisions and what I learned.
 
 ## Use of AI tools
 
