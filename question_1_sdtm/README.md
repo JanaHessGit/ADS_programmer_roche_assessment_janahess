@@ -16,9 +16,7 @@ Creates the SDTM **DS (Disposition)** domain from the raw eCRF data
 
 ## How to run
 
-Set up the packages as described in the main README (start R in the repository folder, then renv::restore()). Restart R before running each program.
-
-OR
+Set up the packages as described in the main README (start R in the repository folder, then renv::restore()). Restart R before running each program or
 
 ```r
 install.packages(c("sdtm.oak", "pharmaverseraw", "pharmaversesdtm",
