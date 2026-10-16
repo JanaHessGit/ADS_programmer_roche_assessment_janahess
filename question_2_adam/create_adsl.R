@@ -15,7 +15,8 @@
 #               question_2_adam/output/adsl.csv  (for easy viewing)
 #
 # Derived variables (assessment specification):
-#   AGEGR9 / AGEGR9N  Age groups "<18" (1), "18 - 50" (2), ">50" (3)
+#   AGEGR9 / AGEGR9N  Age groups "<18" (1), "18 - 50" (2), ">50" (3),
+#                     "Missing" (4) if AGE is missing
 #   TRTSDTM / TRTSTMF Datetime of first exposure with a valid dose and a
 #                     complete date; missing time parts imputed with 00,
 #                     imputation flag not set if only seconds are missing
@@ -24,10 +25,10 @@
 #                     date with a valid result, last complete AE onset date,
 #                     last complete disposition date and last valid dose date
 #
-# Supporting variable (kept for traceability of LSTAVLDT):
-#   TRTEDTM           Datetime of last exposure with a valid dose
-#                     (referenced as ADSL.TRTEDTM in the LSTAVLDT specification)
-# Intermediate variables (derived, then dropped): TRTETMF, TRTSDT, TRTEDT
+# Supporting variables (kept for traceability of LSTAVLDT):
+#   TRTEDTM / TRTETMF  Datetime of last exposure with a valid dose
+#                      (referenced as ADSL.TRTEDTM in the specification)
+#   TRTSDT / TRTEDT    Date parts of TRTSDTM / TRTEDTM
 #
 # How to run  : from the repository root, with log file (see README.md):
 #                 logrx::axecute("question_2_adam/create_adsl.R",
@@ -97,7 +98,7 @@ ex_ext <- ex %>%
     time_imputation     = "first",
     ignore_seconds_flag = TRUE
   ) %>%
-  # not specifically mentioned in specifications but needed for LSTAVLDT
+  # EXENDTC not specifically mentioned in specifications but needed for LSTAVLDT
   derive_vars_dtm(
     dtc                 = EXENDTC,
     new_vars_prefix     = "EXEN",
@@ -204,9 +205,8 @@ adsl <- adsl %>%
     new_vars = exprs(LSTAVLDT)
   )
 
-# Drop intermediate variables: keep only the requested variables plus
-# TRTEDTM (referenced by the LSTAVLDT specification, kept for traceability)
-adsl <- adsl %>% select(-c("TRTETMF", "TRTSDT", "TRTEDT"))
+# Intermediate variables are kept for 
+# traceability (TRTEDTM, TRTETMF, TRTSDT, TRTEDT)
 
 # -----------------------------------------------------------------------------
 # 7. Variable labels
@@ -217,6 +217,9 @@ new_labels <- c(
   TRTSDTM  = "Datetime of First Exposure to Treatment",
   TRTSTMF  = "Time of First Exposure Imput. Flag",
   TRTEDTM  = "Datetime of Last Exposure to Treatment",
+  TRTETMF  = "Time of Last Exposure Imput. Flag",
+  TRTSDT   = "Date of First Exposure to Treatment",
+  TRTEDT   = "Date of Last Exposure to Treatment",
   ITTFL    = "Intent-To-Treat Population Flag",
   LSTAVLDT = "Last Date Known Alive"
 )
@@ -230,7 +233,7 @@ stopifnot(
   "All DM subjects are in ADSL" = setequal(adsl$USUBJID, dm$USUBJID),
   "All new variables present" = all(names(new_labels) %in% names(adsl)),
   "AGEGR9 only uses defined values" =
-    all(adsl$AGEGR9 %in% c("<18", "18 - 50", ">50", NA)),
+    all(adsl$AGEGR9 %in% c("<18", "18 - 50", ">50", "Missing")),
   "ITTFL is Y or N" = all(adsl$ITTFL %in% c("Y", "N"))
 )
 

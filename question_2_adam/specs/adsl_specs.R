@@ -11,13 +11,15 @@
 #   "<18"     -> 1
 #   "18 - 50" -> 2   (18 and 50 inclusive)
 #   ">50"     -> 3
-# Subjects with missing AGE get missing AGEGR9 / AGEGR9N (no category is
-# defined for missing age in the specification).
+# Subjects with missing AGE get AGEGR9 = "Missing", AGEGR9N = 4 (no category
+# is defined for missing age in the specification; as AGEGR1 in the
+# Pharmaverse ADSL example).
 # Used with admiral::derive_vars_cat(); conditions are evaluated in order and
 # the first condition that is TRUE determines the category.
 # -----------------------------------------------------------------------------
 agegr9_lookup <- admiral::exprs(
   ~condition,            ~AGEGR9,   ~AGEGR9N,
+  is.na(AGE),            "Missing", 4,
   AGE < 18,              "<18",     1,
   between(AGE, 18, 50),  "18 - 50", 2,
   AGE > 50,              ">50",     3

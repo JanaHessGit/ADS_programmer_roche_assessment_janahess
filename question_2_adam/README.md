@@ -13,7 +13,7 @@ with the additional variables requested in the assessment.
 | `create_adsl.R` | ADSL program (deliverable) |
 | `specs/adsl_specs.R` | Study-specific rules used by both program and tests: age-group lookup (`agegr9_lookup`) and valid-dose condition (`valid_dose_cond`) |
 | `create_adsl.log` | {logrx} log – evidence that the program runs without errors or warnings |
-| `output/adsl.rds`, `output/adsl.csv` | Resulting ADSL (306 subjects; DM variables + AGEGR9, AGEGR9N, TRTSDTM, TRTSTMF, TRTEDTM, ITTFL, LSTAVLDT) |
+| `output/adsl.rds`, `output/adsl.csv` | Resulting ADSL (306 subjects; DM variables + AGEGR9, AGEGR9N, TRTSDTM, TRTSTMF, ITTFL, LSTAVLDT and the supporting variables TRTEDTM, TRTETMF, TRTSDT, TRTEDT) |
 | `tests/testthat/test-adsl.R` | Unit tests and independent QC (double programming) of all requested variables |
 
 ## How to run
@@ -75,11 +75,12 @@ reference check against `pharmaverseadam::adsl` is skipped if
 
 | Variable | Derivation | {admiral} function |
 |---|---|---|
-| `AGEGR9`, `AGEGR9N` | `"<18"` = 1, `"18 - 50"` = 2 (18 and 50 inclusive), `">50"` = 3; missing if AGE is missing | `derive_vars_cat()` |
+| `AGEGR9`, `AGEGR9N` | `"<18"` = 1, `"18 - 50"` = 2 (18 and 50 inclusive), `">50"` = 3; `"Missing"` = 4 if AGE is missing | `derive_vars_cat()` |
 | `TRTSDTM`, `TRTSTMF` | First EX record (by start datetime, then EXSEQ) with a **valid dose** and a complete start date. Missing hours/minutes/seconds imputed with 00; flag not set if only seconds are missing | `derive_vars_dtm()` (`highest_imputation = "h"`, `time_imputation = "first"`, `ignore_seconds_flag = TRUE`), `derive_vars_merged()` |
 | `ITTFL` | `"Y"` if `DM.ARM` is not missing, else `"N"` | `derive_var_merged_exist_flag()` |
 | `LSTAVLDT` | Latest of: last complete VS date with a valid result, last complete AE start date, last complete DS start date, last valid-dose date (date part of `TRTEDTM`) | `derive_vars_extreme_event()`, `convert_dtc_to_dt()` |
-| Supporting: `TRTEDTM` | Last EX record with a valid dose and a complete end date (missing time imputed with 23:59:59). Referenced as ADSL.TRTEDTM in the LSTAVLDT specification and kept for traceability. `TRTETMF`, `TRTSDT`, `TRTEDT` are derived as intermediate variables and dropped | `derive_vars_merged()`, `derive_vars_dtm_to_dt()` |
+| Supporting: `TRTEDTM`, `TRTETMF` | Last EX record with a valid dose and a complete end date (missing time imputed with 23:59:59) and its time imputation flag. TRTEDTM is referenced as ADSL.TRTEDTM in the LSTAVLDT specification | `derive_vars_merged()` |
+| Supporting: `TRTSDT`, `TRTEDT` | Date parts of TRTSDTM and TRTEDTM; TRTEDT is the last valid-dose date used for LSTAVLDT | `derive_vars_dtm_to_dt()` |
 
 **Valid dose:** `EXDOSE > 0`, or `EXDOSE == 0` and `EXTRT` contains `"PLACEBO"`.
 
@@ -90,8 +91,7 @@ reference check against `pharmaverseadam::adsl` is skipped if
    the 52 screen failures (`ARM = "Screen Failure"`), so `ITTFL = "Y"` for
    everyone. If screen failures should be excluded from the ITT population,
    the condition would change to
-   `!is.na(ARM) & ARM != "Screen Failure"`; this would need to be confirmed
-   with the study statistician.
+   `!is.na(ARM) & ARM != "Screen Failure"`; this would need to be confirmed.
 2. **"Complete" dates** for LSTAVLDT: partial dates (e.g. `"2013-05"`) are not
    imputed but excluded, as the specification requires complete dates
    (26 AE start dates are partial).
@@ -104,6 +104,14 @@ reference check against `pharmaverseadam::adsl` is skipped if
 5. **AGEGR9:** all subjects in this study are 50 or older, so only `"18 - 50"`
    (1 subject, age 50) and `">50"` occur. Boundary values are covered by unit
    tests on dummy data.
+6. **Missing age:** the specification defines no category for a missing age.
+   Subjects with missing AGE are assigned `AGEGR9 = "Missing"`,
+   `AGEGR9N = 4` (as `AGEGR1` in the Pharmaverse ADSL example), so that they
+   are visible as their own category in tables instead of being dropped. No
+   subject in this study has a missing age.
+7. **Supporting variables:** `TRTEDTM`, `TRTETMF`, `TRTSDT` and `TRTEDT` are
+   not requested, but are needed to derive `LSTAVLDT` and are kept in ADSL so
+   that the derivation can be traced.
 
 ## Tests
 
@@ -112,7 +120,7 @@ reference check against `pharmaverseadam::adsl` is skipped if
 - **Unit tests** of the derivation rules on dummy data, including boundary
   values (ages 17, 18, 50, 51, missing), the valid-dose definition and the
   time imputation/flag rules.
-- **Independent QC (double programming):** `AGEGR9/N`, `TRTSDTM/TRTSTMF`,
+- **Independent QC:** `AGEGR9/N`, `TRTSDTM/TRTSTMF`,
   `ITTFL` and `LSTAVLDT` are re-derived from SDTM with plain
   dplyr/lubridate (no {admiral}) and compared with the production ADSL.
 - **Structure:** one record per DM subject, all requested variables present,

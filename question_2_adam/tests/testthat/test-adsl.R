@@ -73,10 +73,10 @@ test_that("AGEGR9/AGEGR9N follow the specified categories incl. boundaries", {
     out$AGEGR9,
     c(
       "<18", "<18", "<18", "18 - 50", "18 - 50", "18 - 50",
-      ">50", ">50", ">50", NA
+      ">50", ">50", ">50", "Missing"
     )
   )
-  expect_identical(out$AGEGR9N, c(1, 1, 1, 2, 2, 2, 3, 3, 3, NA))
+  expect_identical(out$AGEGR9N, c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4))
 })
 
 test_that("valid dose definition matches the specification NOTE", {
