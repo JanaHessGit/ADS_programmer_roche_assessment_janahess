@@ -31,7 +31,7 @@ library(gtsummary)
 library(dplyr, warn.conflicts = FALSE)
 
 prog_dir <- "question_3_tlg"
-out_dir  <- file.path(prog_dir, "output")
+out_dir <- file.path(prog_dir, "output")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # -----------------------------------------------------------------------------
@@ -47,8 +47,10 @@ adae <- pharmaverseadam::adae %>%
   filter(TRTEMFL == "Y", USUBJID %in% adsl$USUBJID)
 
 
-message("Safety population: ", nrow(adsl), " subjects; TEAE records: ",
-        nrow(adae), " from ", n_distinct(adae$USUBJID), " subjects")
+message(
+  "Safety population: ", nrow(adsl), " subjects; TEAE records: ",
+  nrow(adae), " from ", n_distinct(adae$USUBJID), " subjects"
+)
 
 # -----------------------------------------------------------------------------
 # 2. Hierarchical TEAE table

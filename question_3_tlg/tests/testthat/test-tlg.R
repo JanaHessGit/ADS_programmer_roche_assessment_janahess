@@ -27,8 +27,8 @@ source(test_path("..", "..", "R", "tlg_functions.R"))
 out_dir <- test_path("..", "..", "output")
 
 adsl_saf <- pharmaverseadam::adsl %>% filter(SAFFL == "Y")
-adae     <- pharmaverseadam::adae
-teae     <- adae %>% filter(TRTEMFL == "Y", USUBJID %in% adsl_saf$USUBJID)
+adae <- pharmaverseadam::adae
+teae <- adae %>% filter(TRTEMFL == "Y", USUBJID %in% adsl_saf$USUBJID)
 
 # Helper: "65 (76%)" -> 65
 parse_n <- function(x) as.integer(sub("\\s*\\(.*$", "", x))
@@ -85,7 +85,7 @@ test_that("top_ae_incidence uses a custom denominator", {
 ae_table <- readRDS(file.path(out_dir, "ae_summary_table.rds"))
 # table_body: one row per table row, with variable (AESOC/AETERM), label,
 # group1_level (the SOC of a term row) and the cell strings stat_*
-tbl_df   <- ae_table$table_body
+tbl_df <- ae_table$table_body
 
 # Column order of the table: one column per arm (alphabetical), then Total
 arms <- sort(unique(adsl_saf$ACTARM))
@@ -96,7 +96,9 @@ test_that("Column headers show the safety-population N per arm and total", {
     filter(column %in% stat_cols) %>%
     arrange(match(column, stat_cols)) %>%
     pull(label)
-  n_arm <- adsl_saf %>% count(ACTARM) %>% arrange(ACTARM)
+  n_arm <- adsl_saf %>%
+    count(ACTARM) %>%
+    arrange(ACTARM)
 
   expect_match(headers[1], paste0("N = ", n_arm$n[1]))
   expect_match(headers[2], paste0("N = ", n_arm$n[2]))
@@ -123,8 +125,10 @@ test_that("Subject counts per term match an independent count", {
   qc <- teae %>%
     distinct(USUBJID, ACTARM, AESOC, AETERM) %>%
     count(AESOC, AETERM, ACTARM) %>%
-    tidyr::pivot_wider(names_from = ACTARM, values_from = n,
-                       values_fill = 0) %>%
+    tidyr::pivot_wider(
+      names_from = ACTARM, values_from = n,
+      values_fill = 0
+    ) %>%
     mutate(Total = rowSums(across(all_of(arms))))
 
   # Term rows of the table (a term is identified by its SOC and its name)
@@ -140,7 +144,8 @@ test_that("Subject counts per term match an independent count", {
   expect_equal(nrow(joined), nrow(qc)) # every term is in the table
   for (i in seq_along(arms)) {
     expect_equal(joined[[arms[i]]], joined[[stat_cols[i]]],
-                 ignore_attr = TRUE)
+      ignore_attr = TRUE
+    )
   }
   expect_equal(joined$Total, joined$stat_0, ignore_attr = TRUE)
 })
@@ -182,8 +187,10 @@ test_that("Severity plot data match an independent count of ADAE", {
   plot_data <- read.csv(file.path(out_dir, "ae_severity_by_treatment.csv"))
   qc <- adae %>% count(ACTARM, AESEV)
 
-  joined <- inner_join(qc, plot_data, by = c("ACTARM", "AESEV"),
-                       suffix = c("_qc", "_plot"))
+  joined <- inner_join(qc, plot_data,
+    by = c("ACTARM", "AESEV"),
+    suffix = c("_qc", "_plot")
+  )
   expect_equal(nrow(joined), nrow(qc))
   expect_equal(joined$n_qc, joined$n_plot)
   expect_equal(sum(plot_data$n), nrow(adae))
@@ -208,8 +215,10 @@ test_that("Top 10 plot data match an independent incidence calculation", {
 })
 
 test_that("All output files exist and are not empty", {
-  files <- c("ae_summary_table.html", "ae_severity_by_treatment.png",
-             "top10_ae_incidence.png")
+  files <- c(
+    "ae_summary_table.html", "ae_severity_by_treatment.png",
+    "top10_ae_incidence.png"
+  )
   for (f in files) {
     path <- file.path(out_dir, f)
     expect_true(file.exists(path), info = f)

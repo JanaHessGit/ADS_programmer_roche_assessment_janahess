@@ -54,8 +54,10 @@ impute_time <- function(dtc, time_fill = "00:00:00") {
   time_part <- if_else(nchar(dtc) > 11, substr(dtc, 12, 19), "")
   full_time <- paste0(time_part, substr(time_fill, nchar(time_part) + 1, 8))
   if_else(date_ok, ymd_hms(paste(substr(dtc, 1, 10), full_time),
-                           tz = "UTC", quiet = TRUE),
-          as.POSIXct(NA, tz = "UTC"))
+    tz = "UTC", quiet = TRUE
+  ),
+  as.POSIXct(NA, tz = "UTC")
+  )
 }
 
 adsl <- readRDS(adsl_path)
@@ -69,8 +71,10 @@ test_that("AGEGR9/AGEGR9N follow the specified categories incl. boundaries", {
 
   expect_identical(
     out$AGEGR9,
-    c("<18", "<18", "<18", "18 - 50", "18 - 50", "18 - 50",
-      ">50", ">50", ">50", NA)
+    c(
+      "<18", "<18", "<18", "18 - 50", "18 - 50", "18 - 50",
+      ">50", ">50", ">50", NA
+    )
   )
   expect_identical(out$AGEGR9N, c(1, 1, 1, 2, 2, 2, 3, 3, 3, NA))
 })
@@ -91,11 +95,13 @@ test_that("TRTSDTM imputation: 00 for missing time, no flag if only seconds", {
   dummy_ex <- tibble(
     STUDYID = "S1",
     USUBJID = c("A", "B", "C", "D"),
-    EXSEQ   = 1,
-    EXSTDTC = c("2024-01-05",            # time missing   -> 00:00:00, flag H
-                "2024-01-05T10",         # min/sec missing -> 10:00:00, flag M
-                "2024-01-05T10:30",      # only seconds    -> 10:30:00, no flag
-                "2024-01")               # partial date    -> excluded (NA)
+    EXSEQ = 1,
+    EXSTDTC = c(
+      "2024-01-05", # time missing   -> 00:00:00, flag H
+      "2024-01-05T10", # min/sec missing -> 10:00:00, flag M
+      "2024-01-05T10:30", # only seconds    -> 10:30:00, no flag
+      "2024-01"
+    ) # partial date    -> excluded (NA)
   )
   out <- derive_vars_dtm(
     dummy_ex,
@@ -152,7 +158,8 @@ test_that("AGEGR9/AGEGR9N match an independent derivation from DM.AGE", {
   prod <- adsl %>% select(USUBJID, AGEGR9, AGEGR9N)
 
   expect_equal(
-    arrange(prod, USUBJID), arrange(qc, USUBJID), ignore_attr = TRUE
+    arrange(prod, USUBJID), arrange(qc, USUBJID),
+    ignore_attr = TRUE
   )
 })
 
@@ -180,7 +187,8 @@ test_that("TRTSDTM/TRTSTMF match an independent derivation from EX", {
     select(USUBJID, TRTSDTM, TRTSTMF)
 
   expect_equal(
-    arrange(prod, USUBJID), arrange(qc, USUBJID), ignore_attr = TRUE
+    arrange(prod, USUBJID), arrange(qc, USUBJID),
+    ignore_attr = TRUE
   )
 })
 
@@ -201,7 +209,8 @@ test_that("ITTFL is Y if DM.ARM is not missing, else N", {
   prod <- adsl %>% select(USUBJID, ITTFL)
 
   expect_equal(
-    arrange(prod, USUBJID), arrange(qc, USUBJID), ignore_attr = TRUE
+    arrange(prod, USUBJID), arrange(qc, USUBJID),
+    ignore_attr = TRUE
   )
 })
 
@@ -226,7 +235,8 @@ test_that("LSTAVLDT matches an independent derivation from VS, AE, DS, EX", {
     select(USUBJID, LSTAVLDT)
 
   expect_equal(
-    arrange(prod, USUBJID), arrange(qc, USUBJID), ignore_attr = TRUE
+    arrange(prod, USUBJID), arrange(qc, USUBJID),
+    ignore_attr = TRUE
   )
 })
 
@@ -236,8 +246,10 @@ test_that("LSTAVLDT matches an independent derivation from VS, AE, DS, EX", {
 test_that("ADSL has one record per DM subject and all requested variables", {
   expect_false(any(duplicated(adsl$USUBJID)))
   expect_setequal(adsl$USUBJID, dm$USUBJID)
-  expect_true(all(c("AGEGR9", "AGEGR9N", "TRTSDTM", "TRTSTMF",
-                    "ITTFL", "LSTAVLDT") %in% names(adsl)))
+  expect_true(all(c(
+    "AGEGR9", "AGEGR9N", "TRTSDTM", "TRTSTMF",
+    "ITTFL", "LSTAVLDT"
+  ) %in% names(adsl)))
 })
 
 test_that("Derived variables have the expected types", {
@@ -254,6 +266,7 @@ test_that("TRTSDTM/TRTEDTM agree with the pharmaverseadam reference ADSL", {
   prod <- adsl %>% select(USUBJID, TRTSDTM, TRTEDTM)
 
   expect_equal(
-    arrange(prod, USUBJID), arrange(ref, USUBJID), ignore_attr = TRUE
+    arrange(prod, USUBJID), arrange(ref, USUBJID),
+    ignore_attr = TRUE
   )
 })

@@ -37,16 +37,16 @@ qc <- ds_raw %>%
   ) %>%
   transmute(
     USUBJID,
-    DSTERM  = toupper(if_else(is.na(OTHERSP), IT.DSTERM, OTHERSP)),
+    DSTERM = toupper(if_else(is.na(OTHERSP), IT.DSTERM, OTHERSP)),
     DSDECOD = toupper(if_else(is.na(OTHERSP), IT.DSDECOD, OTHERSP)),
-    DSCAT   = case_when(
-      !is.na(OTHERSP)            ~ "OTHER EVENT",
+    DSCAT = case_when(
+      !is.na(OTHERSP) ~ "OTHER EVENT",
       IT.DSDECOD == "Randomized" ~ "PROTOCOL MILESTONE",
-      TRUE                       ~ "DISPOSITION EVENT"
+      TRUE ~ "DISPOSITION EVENT"
     ),
-    VISIT   = toupper(INSTANCE),
+    VISIT = toupper(INSTANCE),
     DSSTDTC = format(mdy(IT.DSSTDAT), "%Y-%m-%d"),
-    DSDTC   = if_else(
+    DSDTC = if_else(
       is.na(DSTMCOL),
       format(mdy(DSDTCOL), "%Y-%m-%d"),
       paste0(format(mdy(DSDTCOL), "%Y-%m-%d"), "T", DSTMCOL)
@@ -76,19 +76,25 @@ test_that("DS keeps all raw records and only DM subjects", {
 
 test_that("USUBJID/DSSEQ is a unique key and DSSEQ starts at 1", {
   expect_false(any(duplicated(ds[c("USUBJID", "DSSEQ")])))
-  first_seq <- ds %>% group_by(USUBJID) %>% summarise(m = min(DSSEQ))
+  first_seq <- ds %>%
+    group_by(USUBJID) %>%
+    summarise(m = min(DSSEQ))
   expect_true(all(first_seq$m == 1))
 })
 
 test_that("Required variables are populated on every record", {
-  required_vars <- c("STUDYID", "DOMAIN", "USUBJID", "DSSEQ",
-                     "DSTERM", "DSDECOD", "DSCAT")
+  required_vars <- c(
+    "STUDYID", "DOMAIN", "USUBJID", "DSSEQ",
+    "DSTERM", "DSDECOD", "DSCAT"
+  )
   expect_false(anyNA(ds[required_vars]))
 })
 
 test_that("DSCAT and VISITNUM have valid values", {
-  expect_true(all(ds$DSCAT %in% c("PROTOCOL MILESTONE", "DISPOSITION EVENT",
-                                  "OTHER EVENT")))
+  expect_true(all(ds$DSCAT %in% c(
+    "PROTOCOL MILESTONE", "DISPOSITION EVENT",
+    "OTHER EVENT"
+  )))
   expect_type(ds$VISITNUM, "double")
   expect_false(anyNA(ds$VISITNUM))
 })

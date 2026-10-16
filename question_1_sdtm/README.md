@@ -9,7 +9,7 @@ Creates the SDTM **DS (Disposition)** domain from the raw eCRF data
 | File | Content |
 |---|---|
 | `01_create_ds_domain.R` | DS program (deliverable) |
-| `metadata/sdtm_ct.csv` | Study controlled terminology (from [pharmaverse/examples](https://github.com/pharmaverse/examples)) |
+| `metadata/sdtm_ct.csv` | Study controlled terminology (from https://github.com/pharmaverse/examples/blob/main/metadata/sdtm_ct.csv) |
 | `01_create_ds_domain.log` | {logrx} log – evidence that the program runs without errors or warnings |
 | `output/ds.rds`, `output/ds.csv` | Resulting DS domain (850 records, 306 subjects, 12 variables) |
 | `tests/testthat/test-ds.R` | Structure checks, independent QC of the aCRF rules and comparison with the reference DS domain |

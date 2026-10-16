@@ -56,13 +56,15 @@ top_ae_incidence <- function(adae, n_top = 10,
     dplyr::arrange(dplyr::desc(.data$n), .data$AETERM) %>%
     dplyr::slice_head(n = n_top) %>%
     dplyr::mutate(
-      N   = denominator,
+      N = denominator,
       pct = .data$n / .data$N,
       # exact (Clopper-Pearson) 95% CI; binom.test() takes one count at a
       # time, so it is run once per term and returns c(lower, upper)
-      ci  = purrr::map2(.data$n, .data$N,
-                        \(k, total) stats::binom.test(k, total)$conf.int),
-      ci_low  = purrr::map_dbl(.data$ci, 1),
+      ci = purrr::map2(
+        .data$n, .data$N,
+        \(k, total) stats::binom.test(k, total)$conf.int
+      ),
+      ci_low = purrr::map_dbl(.data$ci, 1),
       ci_high = purrr::map_dbl(.data$ci, 2)
     ) %>%
     dplyr::select(-"ci")

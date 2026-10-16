@@ -29,7 +29,7 @@ library(dplyr, warn.conflicts = FALSE)
 library(pharmaverseadam)
 
 prog_dir <- "question_3_tlg"
-out_dir  <- file.path(prog_dir, "output")
+out_dir <- file.path(prog_dir, "output")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Helper functions: count_ae_by_severity(), top_ae_incidence()
@@ -48,11 +48,11 @@ stopifnot(
 # Common look: light theme, recessive grid, no minor gridlines
 theme_tlg <- theme_minimal(base_size = 11) +
   theme(
-    panel.grid.minor   = element_blank(),
+    panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
-    plot.title         = element_text(face = "bold"),
+    plot.title = element_text(face = "bold"),
     plot.title.position = "plot",
-    legend.position    = "right"
+    legend.position = "right"
   )
 
 # -----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ print(severity_data)
 plot_severity <- ggplot(severity_data, aes(x = ACTARM, y = n, fill = AESEV)) +
   geom_col(width = 0.6, colour = "white", linewidth = 0.5) +
   labs(
-    title    = "AE severity distribution by treatment",
+    title = "AE severity distribution by treatment",
     x = "Treatment Arm",
     y = "Count of AEs",
     fill = "Severity/Intensity"
@@ -73,9 +73,11 @@ plot_severity <- ggplot(severity_data, aes(x = ACTARM, y = n, fill = AESEV)) +
   theme_tlg
 
 ggsave(file.path(out_dir, "ae_severity_by_treatment.png"), plot_severity,
-       width = 8, height = 5, dpi = 300, bg = "white")
+  width = 8, height = 5, dpi = 300, bg = "white"
+)
 write.csv(severity_data, file.path(out_dir, "ae_severity_by_treatment.csv"),
-          row.names = FALSE)
+  row.names = FALSE
+)
 
 # -----------------------------------------------------------------------------
 # 3. Plot 2 - Top 10 most frequent AEs with 95% CI
@@ -90,17 +92,21 @@ plot_top10 <- top10 %>%
   mutate(AETERM = reorder(AETERM, pct)) %>%
   ggplot(aes(x = pct, y = AETERM)) +
   # horizontal error bars (geom_errorbarh() is deprecated in newer ggplot2)
-  geom_errorbar(aes(xmin = ci_low, xmax = ci_high), width = 0.3,
-                orientation = "y", colour = "black", linewidth = 0.6) +
+  geom_errorbar(aes(xmin = ci_low, xmax = ci_high),
+    width = 0.3,
+    orientation = "y", colour = "black", linewidth = 0.6
+  ) +
   geom_point(size = 2.5, colour = "black") +
   scale_x_continuous(
     labels = scales::label_percent(accuracy = 1),
     limits = c(0, NA), expand = expansion(mult = c(0, 0.05))
   ) +
   labs(
-    title    = "Top 10 Most Frequent Adverse Events",
-    subtitle = paste0("n = ", n_subjects,
-                      " subjects; 95% Clopper-Pearson CIs"),
+    title = "Top 10 Most Frequent Adverse Events",
+    subtitle = paste0(
+      "n = ", n_subjects,
+      " subjects; 95% Clopper-Pearson CIs"
+    ),
     x = "Percentage of Patients (%)",
     y = NULL
   ) +
@@ -110,8 +116,10 @@ plot_top10 <- top10 %>%
   )
 
 ggsave(file.path(out_dir, "top10_ae_incidence.png"), plot_top10,
-       width = 8, height = 5, dpi = 300, bg = "white")
+  width = 8, height = 5, dpi = 300, bg = "white"
+)
 write.csv(top10, file.path(out_dir, "top10_ae_incidence.csv"),
-          row.names = FALSE)
+  row.names = FALSE
+)
 
 message("Plots saved to ", out_dir)

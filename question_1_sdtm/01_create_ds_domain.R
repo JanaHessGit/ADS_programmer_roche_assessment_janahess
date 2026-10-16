@@ -9,17 +9,19 @@
 # Spec        : Subject Disposition aCRF (pharmaverseraw) and SDTMIG v3.4 DS
 #
 # Mapping rules (from the annotated CRF):
-#   * IT.DSTERM  -> DSTERM, IT.DSDECOD -> DSDECOD  when OTHERSP is null
-#   * OTHERSP    -> DSTERM and DSDECOD             when OTHERSP is not null
-#   * DSCAT = "PROTOCOL MILESTONE" if IT.DSDECOD = "Randomized",
-#             "OTHER EVENT"        if OTHERSP is not null,
-#             "DISPOSITION EVENT"  otherwise
+#   * IT.DSTERM  -> DSTERM, IT.DSDECOD -> DSDECOD  if OTHERSP is null
+#   * OTHERSP    -> DSTERM and DSDECOD             if OTHERSP is not null
+#   * DSCAT = if OTHERSP is not null -> "OTHER EVENT",
+#             if OTHERSP is null:
+#               if IT.DSDECOD = "Randomized" -> "PROTOCOL MILESTONE",
+#               else -> "DISPOSITION EVENT"
 #   * DSDTCOL + DSTMCOL -> DSDTC   (ISO 8601 date/time of collection)
 #   * IT.DSSTDAT        -> DSSTDTC (ISO 8601 start date; the aCRF calls the
 #                                   field IT.DSSDAT, the data IT.DSSTDAT)
-# Not annotated on the aCRF (SDTMIG / pharmaverse conventions):
+# Not annotated on the aCRF (SDTMIG / pharmaverse conventions) but 
+# indicated in the question:
 #   * INSTANCE -> VISIT / VISITNUM via study CT (as in the pharmaverse VS
-#     example)
+#     example) 
 #   * USUBJID from DM (DM.SITEID-DM.SUBJID = PATNUM)
 #   * DSSEQ  : unique sequence number per subject, chronological by DSSTDTC
 #   * DSSTDY : study day of DSSTDTC relative to DM.RFXSTDTC (no day 0)
@@ -42,20 +44,22 @@ library(pharmaversesdtm)
 
 # All paths are relative to the repository root
 prog_dir <- "question_1_sdtm"
-out_dir  <- file.path(prog_dir, "output")
+out_dir <- file.path(prog_dir, "output")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # -----------------------------------------------------------------------------
 # 1. Read input data
 # -----------------------------------------------------------------------------
 ds_raw <- pharmaverseraw::ds_raw
-dm     <- pharmaversesdtm::dm
+dm <- pharmaversesdtm::dm
 
-# Study controlled terminology (same file as in pharmaverse/examples).
+# Study controlled terminology (same file as in pharmaverse/examples) downloaded from GitHub link provided in the video assessment.
 study_ct <- read.csv(file.path(prog_dir, "metadata", "sdtm_ct.csv"), stringsAsFactors = FALSE)
 
-message("ds_raw: ", nrow(ds_raw), " records, ",
-        n_distinct(ds_raw$PATNUM), " subjects")
+message(
+  "ds_raw: ", nrow(ds_raw), " records, ",
+  n_distinct(ds_raw$PATNUM), " subjects"
+)
 
 # Data assumption used by the conditional mappings below: a record has either
 # a coded reason (IT.DSTERM) or an "other" text (OTHERSP), never both.
@@ -79,6 +83,7 @@ ds_raw <- ds_raw %>%
 # -----------------------------------------------------------------------------
 ds <-
   # --- DSTERM: from IT.DSTERM if OTHERSP is null, else from OTHERSP ----------
+  # no controlled terminology as shown in SDTMIG DS domain table
   assign_no_ct(
     raw_dat = condition_add(ds_raw, is.na(OTHERSP)),
     raw_var = "IT.DSTERM",
@@ -97,7 +102,7 @@ ds <-
   # "Lost to Follow-Up" and "Study Terminated by Sponsor" as unmapped because
   # the study CT's collected values differ in wording or case. The upper-cased
   # raw values equal the C66727 submission values (checked in section 6).
-  # "Randomized" is not part of C66727.
+  # "Randomized" is not part of C66727, it is a protocol milestone (PROTMLST).
   # For other events, DSDECOD = OTHERSP (free text, no CT).
   assign_ct(
     raw_dat = condition_add(ds_raw, is.na(OTHERSP)),
@@ -213,7 +218,7 @@ visitnum_ct <- study_ct %>%
   ) %>%
   distinct(INSTANCE_UP, .keep_all = TRUE)
 
-# Convert string to numeric without coercion warnings: only strings that are
+# Function to convert string to numeric without coercion warnings: only strings that are
 # valid numbers (e.g. "13", "6.1") are converted, everything else becomes NA.
 as_num_safe <- function(x) {
   out <- rep(NA_real_, length(x))
@@ -228,13 +233,13 @@ ds <- ds %>%
   mutate(INSTANCE_UP = toupper(INSTANCE)) %>%
   left_join(visitnum_ct, by = "INSTANCE_UP") %>%
   mutate(
-    STUDYID  = STUDY,
-    DOMAIN   = "DS",
-    DSTERM   = toupper(DSTERM),
-    DSDECOD  = toupper(DSDECOD),
-    VISIT    = toupper(VISIT),
+    STUDYID = STUDY,
+    DOMAIN = "DS",
+    DSTERM = toupper(DSTERM),
+    DSDECOD = toupper(DSDECOD),
+    VISIT = toupper(VISIT),
     # VISITNUM: (1) sdtm.oak CT mapping, (2) case-insensitive CT lookup,
-    # (3) number from "Unscheduled x.y" visit names
+    # (3) only number from "Unscheduled x.y" visit names
     VISITNUM_FALLBACK = is.na(as_num_safe(VISITNUM)),
     VISITNUM = coalesce(
       as_num_safe(VISITNUM),
@@ -251,7 +256,8 @@ if (nrow(visit_fallback) > 0) {
   message(
     "VISITNUM derived outside the study CT for: ",
     paste0(visit_fallback$INSTANCE, " -> ", visit_fallback$VISITNUM,
-           collapse = "; ")
+      collapse = "; "
+    )
   )
 }
 
@@ -259,7 +265,7 @@ if (nrow(visit_fallback) > 0) {
 # 5. Derive DSSEQ and DSSTDY
 # -----------------------------------------------------------------------------
 ds <- ds %>%
-  # Sequence number per subject, in chronological order of the event
+  # SUnique sequence number per subject, in chronological order of the event
   # (events on the same day keep the order in which they were collected).
   derive_seq(
     tgt_var  = "DSSEQ",
@@ -303,8 +309,10 @@ for (v in names(labels)) attr(ds[[v]], "label") <- labels[[v]]
 # -----------------------------------------------------------------------------
 # 6. Checks (the program stops with an error if any check fails)
 # -----------------------------------------------------------------------------
-required_vars <- c("STUDYID", "DOMAIN", "USUBJID", "DSSEQ", "DSTERM",
-                   "DSDECOD", "DSCAT")
+required_vars <- c(
+  "STUDYID", "DOMAIN", "USUBJID", "DSSEQ", "DSTERM",
+  "DSDECOD", "DSCAT"
+)
 stopifnot(
   "One DS record per raw record"  = nrow(ds) == nrow(ds_raw),
   "Key USUBJID/DSSEQ is unique"   = !any(duplicated(ds[c("USUBJID", "DSSEQ")])),
@@ -321,8 +329,10 @@ not_in_ct <- ds %>%
   filter(DSCAT == "DISPOSITION EVENT", !DSDECOD %in% ncomplete) %>%
   distinct(DSDECOD)
 if (nrow(not_in_ct) > 0) {
-  warning("DSDECOD values not in C66727: ",
-          paste(not_in_ct$DSDECOD, collapse = ", "))
+  warning(
+    "DSDECOD values not in C66727: ",
+    paste(not_in_ct$DSDECOD, collapse = ", ")
+  )
 }
 
 # Summaries for the log
@@ -335,5 +345,7 @@ glimpse(ds)
 saveRDS(ds, file.path(out_dir, "ds.rds"))
 write.csv(ds, file.path(out_dir, "ds.csv"), row.names = FALSE, na = "")
 
-message("DS domain created: ", nrow(ds), " records, ",
-        n_distinct(ds$USUBJID), " subjects")
+message(
+  "DS domain created: ", nrow(ds), " records, ",
+  n_distinct(ds$USUBJID), " subjects"
+)
