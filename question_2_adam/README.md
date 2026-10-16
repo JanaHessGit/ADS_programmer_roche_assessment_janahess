@@ -36,7 +36,7 @@ install.packages(c("admiral", "pharmaversesdtm", "pharmaverseadam",
 ```
 
 All commands are run **from the repository root**, i.e. with the repository
-folder as working directory (e.g. open the RStudio project).
+folder as working directory (see main README).
 
 **Step 1 – Run the program and create the log file**
 
