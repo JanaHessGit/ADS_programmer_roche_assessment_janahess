@@ -119,4 +119,4 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 24 ]`).
   DSSTDY is recalculated from DM; DSSEQ is checked for chronological order.
 - **Reference:** the output is compared with `pharmaversesdtm::ds`.
 
-  Tests were drafted with GitHub Copilot and extended manually.
+Tests were drafted with GitHub Copilot and extended manually.
