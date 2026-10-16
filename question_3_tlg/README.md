@@ -83,27 +83,26 @@ All tests should pass (`[ FAIL 0 | WARN 0 | SKIP 0 | PASS 49 ]`).
 | Rows: AESOC / AETERM | `tbl_hierarchical(variables = c(AESOC, AETERM))`, plus an overall "Treatment Emergent AEs" row |
 | Columns: ACTARM | `by = ACTARM` |
 | n (%) | Number and percentage of **subjects** (`id = USUBJID`): a subject is counted once per row |
-| Denominator | Safety population in ADSL (`SAFFL == "Y"`): Placebo N = 86, Xanomeline High Dose N = 72, Xanomeline Low Dose N = 96 |
-| Total column | `add_overall(last = TRUE)`, N = 254 |
+| Denominator | Safety population in ADSL (`SAFFL == "Y"`),
+| Total column | `add_overall(last = TRUE)`,
 | Sort by descending frequency | `sort_hierarchical()`: SOCs by number of subjects, terms within each SOC |
 
 ### Plot 1 – AE severity distribution by treatment
 
-Stacked bars of the number of AE **records** in ADAE by `ACTARM` and `AESEV`
-(MILD, MODERATE, SEVERE), as in the sample output.
+Stacked bars of the number of AE **records** in ADAE by `ACTARM` and `AESEV`.
 
 ### Plot 2 – Top 10 most frequent AEs
 
 Subject incidence per `AETERM` (subjects with at least one record of the
-term), the 10 most frequent terms, with exact **95% Clopper-Pearson**
+term), the 10 most frequent terms, with **95% Clopper-Pearson**
 confidence intervals (`stats::binom.test()`).
 
 ## Assumptions
 
 1. **Plots use all ADAE records** (not only TEAEs) and Plot 2 uses all
    **225 subjects in ADAE** as denominator, to match the sample output in the
-   assessment (e.g. Pruritus 57/225 = 25.3%). A conventional incidence rate
-   would use the safety population (N = 254) as denominator;
+   assessment (e.g. Pruritus 57/225 = 25.3%). Other option would be to use 
+   the safety population (N = 254) as denominator;
    `top_ae_incidence()` has a `denominator` argument for this.
 2. **Table denominator:** the safety population (`SAFFL == "Y"`), which gives
    exactly the column N's of the sample output (86 / 72 / 96).
